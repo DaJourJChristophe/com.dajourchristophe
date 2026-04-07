@@ -334,12 +334,21 @@ void function()
   <button class="button" id="close">
     x
   </button>
-  <h1 class="title">
-    Hey, I'm <span class="highlight">Da'Jour J. Christophe</span>
-    <span class="sub">UX/UI Designer</span>
-  </h1>
-  <p class="text">Morbi magna leo, laoreet vitae gravida sit amet, luctus ut lorem. Aliquam metus nisi, pulvinar nec ex eget, ultricies efficitur leo. Phasellus vel augue et dui malesuada gravida ultrices sed augue. Curabitur molestie convallis feugiat. Vivamus rutrum elit et ligula rutrum, non rutrum est mattis. Suspendisse potenti. Duis posuere lectus vel tortor consequat sollicitudin. Vestibulum finibus a diam non rutrum. Vivamus quis urna eros. Quisque tincidunt eros id lectus congue, quis faucibus justo iaculis. Vivamus eu faucibus purus. Morbi finibus porta turpis a tempor. Duis porttitor efficitur quam in dapibus.<br><br>Quisque vel accumsan urna, eget luctus ipsum. Vestibulum metus ante, maximus quis varius in, euismod porta est. Fusce tincidunt fringilla ex, eget consequat quam dignissim ac.</p>
-  <a class="link">Get In Touch</a>
+  <ul class="list">
+    <li class="list-item">
+      <h1 class="title">
+        Hey, I'm <span class="highlight">Da'Jour J. Christophe</span>
+        <span class="sub">UX/UI Designer</span>
+      </h1>
+      <p class="text">Da’Jour J. Christophe is an emerging leader in Data Science, recognized for combining deep technical rigor with an unconventional, forward-thinking approach to problem-solving. Born at Fort Bragg into a military family, he developed an early foundation in discipline, adaptability, and systems thinking.<br><br>Prior to his military service, Christophe worked as a Software Engineer at Drexel University in Philadelphia, where he designed and developed software systems in a production environment. Building on this experience, he later enlisted in the United States Air Force and served for over eight years.<br><br>During his service, Christophe faced significant mental health challenges, ultimately leading to his separation from the military. These experiences, while difficult, became a defining inflection point—reshaping his perspective and strengthening his resilience.<br><br>Following his transition back to civilian life, he leveraged more than a decade of experience in software design and engineering to pivot into Data Science. Today, his work focuses on experimental, low-latency, end-to-end meta-learning architectures, with an emphasis on building adaptive systems that operate efficiently in dynamic environments.</p>
+      <a class="link" id="get-in-touch-cta">Get In Touch</a>
+    </li>
+    <li class="list-item">
+      <figure class="fig">
+        <img src="../assets/img/profile2.jpg" alt="#" class="img" />
+      </figure>
+    </li>
+  </ul>
 </section>
 `;
 
@@ -361,6 +370,57 @@ void function()
       if (targetElement.classList.contains('open'))
       {
         targetElement.classList.remove('open');
+      }
+    });
+
+    document.getElementById('get-in-touch-cta').addEventListener('click', function(event)
+    {
+      if (event.preventDefault)
+      {
+        event.preventDefault();
+      }
+
+      targetElement.innerHTML = `
+  <section class="section">
+    <button class="button" id="close">
+      x
+    </button>
+    contact
+  </section>
+  `;
+
+      document.getElementById('close').addEventListener('click', function(event)
+      {
+        if (event.preventDefault)
+        {
+          event.preventDefault();
+        }
+
+        buttons.forEach(button =>
+        {
+          if (button.parentElement.classList.contains('active'))
+          {
+            button.parentElement.classList.remove('active');
+          }
+        });
+
+        if (targetElement.classList.contains('open'))
+        {
+          targetElement.classList.remove('open');
+        }
+      });
+
+      buttons.forEach(button =>
+      {
+        if (button.parentElement.classList.contains('active'))
+        {
+          button.parentElement.classList.remove('active');
+        }
+      });
+
+      if (targetElement.classList.contains('open') == false)
+      {
+        targetElement.classList.add('open');
       }
     });
 
