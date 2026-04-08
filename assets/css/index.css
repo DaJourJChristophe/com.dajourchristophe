@@ -392,7 +392,7 @@ body .page {
   text-transform: uppercase;
   shape-rendering: geometricPrecision;
   text-rendering: geometricPrecision;
-  transform: translate(var(--hero-track-x), var(--hero-track-y)) scaleX(4) scaleY(3);
+  transform: translate3d(var(--hero-track-x), var(--hero-track-y), 0) scaleX(4) scaleY(3);
   transform-origin: left;
 }
 
@@ -495,7 +495,7 @@ body .page {
 
 @keyframes banner-title-entry-animation {
   from { opacity: .1; transform: translate(20%, 0); }
-    to { opacity:  1; transform: translate(var(--title-track-x), var(--title-track-y)); }
+    to { opacity:  1; transform: translate3d(var(--title-track-x), var(--title-track-y), 0); }
 }
 
 .banner .title {
@@ -527,7 +527,7 @@ body .page {
 
 @keyframes banner-text-entry-animation {
   from { opacity: .1; transform: translate(-20%, 0); }
-    to { opacity:  1; transform: translate(var(--text-track-x), var(--text-track-y)); }
+    to { opacity:  1; transform: translate3d(var(--text-track-x), var(--text-track-y), 0); }
 }
 
 .banner .text {
@@ -545,7 +545,7 @@ body .page {
     "wdth" 100;
   shape-rendering: geometricPrecision;
   text-rendering: geometricPrecision;
-  transform: translate(var(--text-track-x), var(--text-track-y));
+  transform: translate3d(var(--text-track-x), var(--text-track-y), 0);
   animation: banner-text-entry-animation 240ms linear 2.25s forwards;
 }
 
@@ -717,6 +717,15 @@ body .page {
 }
 
 .page .article {
+  --about-hero-track-x: 0px;
+  --about-hero-track-y: 0px;
+  --about-hero-counter-x: 0px;
+  --about-hero-counter-y: 0px;
+  --about-image-front-x: 0px;
+  --about-image-front-y: 0px;
+  --about-image-back-x: 0px;
+  --about-image-back-y: 0px;
+
   position: relative;
   display: block;
   grid-area: a;
@@ -742,7 +751,7 @@ body .page {
   align-items: flex-start;
   width: 100%;
   height: 100%;
-  padding: 7rem 12.5% 0;
+  padding: 10rem 12.5% 0 calc(12.5% - 9rem);
   background-color: var(--background-color);
   background: linear-gradient(
     var(--background-color) 75%, #d4d4d4
@@ -782,18 +791,48 @@ body .page {
 
 .section .list .list-item,
 .section .list .list-item + .list-item {
+  position: relative;
   display: block;
+  width: 50%;
 }
 
 .section .list .list-item:first-child {
-  padding: 0 3rem 0 0;
+  padding: 0 3rem 0 6rem;
 }
 
 .section .list .list-item:last-child {
   padding: 0 0 0 3rem;
 }
 
+.article .section .list .list-item hr {
+  position: absolute;
+  width: 1px;
+  height: calc(100% - 10px);
+  bottom: 0;
+  left: 0;
+  margin: 0;
+  border: none;
+  background: #ddd;
+  border-radius: 0;
+}
+
+.section .list .list-item:last-child .quote {
+  position: absolute;
+  top: 20rem;
+  right: 8rem;
+  line-height: 1.6;
+  color: #222;
+  font-size: 110%;
+  font-family: 'Roboto', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
 .section .fig {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
@@ -802,6 +841,7 @@ body .page {
 }
 
 .section .fig > .img {
+  position: relative;
   display: block;
   width: auto;
   height: auto;
@@ -810,21 +850,47 @@ body .page {
   filter: grayscale(97.5%);
 }
 
+.section .fig > .img:nth-child(1) {
+  transform: translate3d(var(--about-image-front-x), var(--about-image-front-y), 0);
+  z-index: 8000;
+}
+
+.section .fig > .img:nth-child(2) {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  opacity: 0.85;
+  filter: grayscale(97.5%) blur(.95px);
+  transform: translate3d(var(--about-image-back-x), var(--about-image-back-y), 0);
+  z-index: 7000;
+}
+
 .section .title {
   max-width: 65rem;
-  margin: 0 0 5rem;
+  margin: 0 0 9rem;
   line-height: 1.3;
   color: #333;
-  font-size: 250%;
+  font-size: 300%;
   font-family: 'Cossette Texte', sans-serif;
   font-weight: 700;
   font-style: normal;
+  text-transform: uppercase;
+}
+
+.section.about-me .title {
+  transform: translate3d(var(--about-hero-track-x), var(--about-hero-track-y), 0);
 }
 
 .section .title > .highlight {
-  margin-left: 5px;
+  display: inline-block;
+  margin-top: 1.5rem;
   color: #111;
-  font-size: 110%;
+  font-size: 136.35%;
+}
+
+.section.about-me .title > .highlight,
+.section.about-me .title > .sub {
+  transform: translate3d(var(--about-hero-counter-x), var(--about-hero-counter-y), 0);
 }
 
 .section .title > .sub {
@@ -832,15 +898,19 @@ body .page {
   width: 100%;
   color: #2f2f2f;
   font-family: 'Instrument Serif', serif;
-  font-size: 75%;
+  font-size: 55%;
   font-style: normal;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  text-align: right;
+  text-transform: capitalize;
 }
 
 .section .text {
   max-width: 65rem;
-  margin: 0 0 8rem;
-  line-height: 1.6;
-  color: #202020;
+  margin: 0 0 7rem;
+  line-height: 1.8;
+  color: #303030;
   font-size: 105%;
   font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
@@ -848,16 +918,19 @@ body .page {
   font-style: normal;
   font-variation-settings:
     "wdth" 100;
-  text-align: justify;
+}
+
+.section .text strong {
+  color: #202020;
 }
 
 .section .link {
-  max-width: 14.5rem;
+  max-width: 18.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   color: #111;
-  padding: 1rem 0;
+  padding: 1.25rem 0;
   line-height: 1;
   font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
@@ -875,6 +948,48 @@ body .page {
   color: white;
   cursor: pointer;
   background-color: #000;
+}
+
+.section .label,
+.section .label + .label {
+  position: absolute;
+  bottom: -30px;
+  right: -50px;
+  opacity: .038;
+  font-size: 800%;
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+  font-style: normal;
+  writing-mode: vertical-rl;
+}
+
+.section .label:nth-child(4) {
+  bottom: 0;
+  right: -30px;
+  opacity: .032;
+}
+
+.section .label:nth-child(5) {
+  bottom: 30px;
+  right: 0;
+  opacity: .029;
+}
+
+.section .label:nth-child(6) {
+  bottom: 60px;
+  right: 30px;
+  opacity: .022;
+}
+
+.section .label:nth-child(7) {
+  bottom: 90px;
+  right: 60px;
+  opacity: .016;
+}
+
+.article .section.experience {
+  align-items: center;
+  padding-left: 0;
 }
 
 .section.experience > .title {
