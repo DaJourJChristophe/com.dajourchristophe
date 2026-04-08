@@ -109,29 +109,57 @@ body .page {
 }
 
 .page .splash {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   grid-area: t;
   margin: 0 -30px;
   opacity: 1;
+  overflow: hidden;
   background-color: #d4d4d4;
   animation: splash-entry-animation 240ms linear 1.75s forwards;
 }
 
-.splash .text {
+.splash .signature {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.splash .signature .ink-clip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: visible;
+}
+
+.splash .signature .ink {
+  display: block;
   color: #111;
-  font-family: 'Meow Script', cursive;
-  font-size: 6.5rem;
-  font-style: normal;
+  line-height: 1.05;
+  padding: .1em .12em .24em .08em;
+  white-space: nowrap;
+  font-family: 'Meow Script', 'Segoe Script', 'Brush Script MT', cursive;
+  font-size: clamp(4.8rem, 6.9vw, 8.3rem);
   font-weight: 400;
-  text-anchor: middle;
-  text-rendering: geometricPrecision;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-smooth: never;
-  shape-rendering: geometricPrecision;
-  text-rendering: geometricPrecision;
+  -webkit-text-stroke: .35px #d4d4d4;
+  paint-order: stroke fill;
+  clip-path: inset(0 100% 0 0);
+  -webkit-clip-path: inset(0 100% 0 0);
+}
+
+.splash .canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 
 @keyframes navigation-entry-animation {
@@ -752,13 +780,18 @@ body .page {
   width: 100%;
   height: 100%;
   padding: 10rem 12.5% 0 calc(12.5% - 9rem);
+  overflow: hidden;
   background-color: var(--background-color);
-  background: linear-gradient(
-    var(--background-color) 75%, #d4d4d4
-  );
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
   box-shadow: 0 -1px 2.5px 0 rgba(0, 0, 0, .015);
+}
+
+.article .section.about-me {
+  background-image: url('../img/background.svg');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: none;
 }
 
 .section .button {
@@ -772,6 +805,13 @@ body .page {
   border: 1px solid #111;
   background: 0 0;
   border-radius: 40px;
+  z-index: 8000;
+}
+
+.article .section.about-me .button {
+  top: 10rem;
+  left: 5rem;
+  right: auto;
 }
 
 .section .button:hover {
@@ -818,8 +858,8 @@ body .page {
 
 .section .list .list-item:last-child .quote {
   position: absolute;
-  top: 20rem;
-  right: 8rem;
+  top: 12.5rem;
+  right: 2rem;
   line-height: 1.6;
   color: #222;
   font-size: 110%;
@@ -851,16 +891,20 @@ body .page {
 }
 
 .section .fig > .img:nth-child(1) {
+  margin: 0 0 0 2%;
   transform: translate3d(var(--about-image-front-x), var(--about-image-front-y), 0);
+  border-radius: 40rem;
   z-index: 8000;
 }
 
 .section .fig > .img:nth-child(2) {
+  margin: 0 4% 0 0;
   position: absolute;
   right: 0;
   bottom: 0;
   opacity: 0.85;
   filter: grayscale(97.5%) blur(.95px);
+  border-radius: 40rem;
   transform: translate3d(var(--about-image-back-x), var(--about-image-back-y), 0);
   z-index: 7000;
 }
@@ -954,8 +998,8 @@ body .page {
 .section .label + .label {
   position: absolute;
   bottom: -30px;
-  right: -50px;
-  opacity: .038;
+  left: -50px;
+  opacity: .018;
   font-size: 800%;
   font-family: 'Instrument Serif', serif;
   font-weight: 400;
@@ -965,36 +1009,66 @@ body .page {
 
 .section .label:nth-child(4) {
   bottom: 0;
-  right: -30px;
-  opacity: .032;
+  left: -30px;
+  opacity: .012;
 }
 
 .section .label:nth-child(5) {
   bottom: 30px;
-  right: 0;
-  opacity: .029;
+  left: 0;
+  opacity: .009;
 }
 
 .section .label:nth-child(6) {
   bottom: 60px;
-  right: 30px;
-  opacity: .022;
+  left: 30px;
+  opacity: .002;
 }
 
 .section .label:nth-child(7) {
   bottom: 90px;
-  right: 60px;
-  opacity: .016;
+  left: 60px;
+  opacity: .001;
 }
 
 .article .section.experience {
   align-items: center;
-  padding-left: 0;
+  padding: 0;
 }
 
-.section.experience > .title {
-  margin: 0 0 1rem;
-  font-size: 300%;
+.article .section.experience::before {
+  position: absolute;
+  display: block;
+  content: '';
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  filter: saturate(1px) blur(1.1px);
+  background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)), url('../img/bikes.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 7000;
+}
+
+.section.experience .bubble {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 6rem;
+  background-color: #111;
+  border-radius: 300px;
+  box-shadow: 0 .5rem 1rem 0 rgba(0, 0, 0, .15);
+  z-index: 8000;
+}
+
+.section.experience .title {
+  margin: 0 0 2rem;
+  letter-spacing: 0.05em;
+  color: #fff;
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
   font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
@@ -1003,9 +1077,11 @@ body .page {
     "wdth" 100;
 }
 
-.section.experience > .text {
+.section.experience .text {
   max-width: 60rem;
   margin: 0;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.7);
   font-size: 110%;
   font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
