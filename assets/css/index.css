@@ -654,11 +654,42 @@ body .page {
 .page .footer {
   position: relative;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: flex-start;
   grid-area: f;
-  padding-left: 3%;
+  padding: 0 7rem 0 3%;
   z-index: 2000;
+}
+
+.footer .legal-list {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 1rem 0 0;
+  list-style-type: none;
+}
+
+.footer .legal-item {
+  display: flex;
+}
+
+.footer .legal-link {
+  padding: .95rem 1.55rem;
+  color: #555;
+  font-size: 1.18rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  letter-spacing: .04em;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.footer .legal-link:hover {
+  color: #fff;
+  cursor: pointer;
+  background-color: #111;
+  border-color: #111;
 }
 
 .footer .scroll-indicator {
@@ -1468,7 +1499,8 @@ body .page {
 }
 
 .article .section.social-media,
-.article .section.contact {
+.article .section.contact,
+.article .section.legal {
   justify-content: flex-start;
   align-items: center;
   padding: 4rem 4rem 0;
@@ -1476,7 +1508,8 @@ body .page {
 }
 
 .section.social-media .button,
-.section.contact .button {
+.section.contact .button,
+.section.legal .button {
   top: 2rem;
   left: 2rem;
   right: auto;
@@ -1488,13 +1521,15 @@ body .page {
 }
 
 .section.social-media .button:hover,
-.section.contact .button:hover {
+.section.contact .button:hover,
+.section.legal .button:hover {
   color: #fff;
   border-color: #111;
 }
 
 .section.social-media .shell,
-.section.contact .shell {
+.section.contact .shell,
+.section.legal .shell {
   display: flex;
   flex-direction: column;
   width: min(100%, 112rem);
@@ -1509,7 +1544,8 @@ body .page {
 }
 
 .section.social-media .eyebrow,
-.section.contact .eyebrow {
+.section.contact .eyebrow,
+.section.legal .eyebrow {
   display: inline-flex;
   align-items: center;
   margin: 0 0 2rem;
@@ -1521,7 +1557,8 @@ body .page {
 }
 
 .section.social-media .eyebrow .dot,
-.section.contact .eyebrow .dot {
+.section.contact .eyebrow .dot,
+.section.legal .eyebrow .dot {
   width: .55rem;
   height: .55rem;
   margin-right: 1.2rem;
@@ -1530,7 +1567,8 @@ body .page {
 }
 
 .section.social-media .hero,
-.section.contact .hero {
+.section.contact .hero,
+.section.legal .hero {
   margin: 0 0 2.4rem;
   line-height: .92;
   letter-spacing: -0.18rem;
@@ -1542,7 +1580,8 @@ body .page {
 }
 
 .section.social-media .lede,
-.section.contact .lede {
+.section.contact .lede,
+.section.legal .lede {
   max-width: 52rem;
   margin: 0 0 5rem;
   line-height: 1.7;
@@ -1746,4 +1785,67 @@ body .page {
   color: #666;
   font-size: 1.45rem;
   font-family: 'Roboto', sans-serif;
+}
+
+.section.legal .shell {
+  width: min(100%, 108rem);
+}
+
+.section.legal .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.section.legal .updated {
+  margin-bottom: 3rem;
+  color: #878787;
+  font-size: 1.25rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.section.legal .content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.8rem 4rem;
+  width: 100%;
+  padding-top: 1rem;
+}
+
+.section.legal .legal-block {
+  padding: 2.4rem 0 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.section.legal .legal-block h3 {
+  margin: 0 0 1.2rem;
+  color: #252525;
+  font-size: 2rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 600;
+}
+
+.section.legal .legal-block p {
+  margin: 0;
+  line-height: 1.8;
+  color: #555;
+  font-size: 1.55rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.section.legal .footer-note {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 3.2rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  color: #7f7f7f;
+  font-size: 1.35rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.section.legal .footer-note a {
+  color: #3a3a3a;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.18);
 }

@@ -348,6 +348,8 @@ void function()
   const servicesButton = document.getElementById('services-cta');
   const aboutMeButton = document.getElementById('about-me-cta');
   const socialMediaButton = document.getElementById('social-media-cta');
+  const termsButton = document.getElementById('terms-cta');
+  const privacyButton = document.getElementById('privacy-cta');
 
   const buttons = [
     experienceButton,
@@ -610,6 +612,76 @@ void function()
     openArticle(experienceButton);
   }
 
+  function renderLegalSection(kind)
+  {
+    var isTerms = kind === 'terms';
+    var title = isTerms ? 'Terms of Service' : 'Privacy Policy';
+    var eyebrow = isTerms ? 'TERMS' : 'PRIVACY';
+    var updated = 'Last updated: April 8, 2026';
+    var intro = isTerms
+      ? 'These terms govern use of this site, project inquiries, and any collaboration that may follow. They are written to set expectations clearly and keep communication straightforward.'
+      : 'This policy explains what information may be collected through this site, how it is used, and the principles that guide how contact and inquiry information is handled.';
+    var sections = isTerms ? `
+      <div class="legal-block">
+        <h3>Use of this site</h3>
+        <p>This site is intended to present professional work, services, and ways to get in touch. You may browse, reference, and share public content for informational purposes, but you may not misuse the site, attempt to disrupt it, or represent its content as your own.</p>
+      </div>
+      <div class="legal-block">
+        <h3>Project inquiries</h3>
+        <p>Submitting a message or inquiry does not create a client relationship, partnership, or guarantee of availability. Any engagement begins only after mutual written agreement on scope, terms, and expectations.</p>
+      </div>
+      <div class="legal-block">
+        <h3>Intellectual property</h3>
+        <p>Unless otherwise noted, the content, writing, visuals, and project materials presented here remain the property of their respective owner. Case study material may reference third-party platforms, organizations, or datasets for descriptive purposes only.</p>
+      </div>
+      <div class="legal-block">
+        <h3>No warranty</h3>
+        <p>This site and its contents are provided as-is for general information. While every effort is made to keep the material accurate and current, no warranty is made regarding completeness, suitability, or uninterrupted availability.</p>
+      </div>
+    ` : `
+      <div class="legal-block">
+        <h3>Information you provide</h3>
+        <p>If you choose to make contact, information such as your name, email address, organization, and message details may be received solely for the purpose of reviewing and responding to your inquiry.</p>
+      </div>
+      <div class="legal-block">
+        <h3>How information is used</h3>
+        <p>Contact information is used to reply to inquiries, evaluate project fit, and continue relevant conversations. It is not sold, rented, or used for unrelated marketing campaigns.</p>
+      </div>
+      <div class="legal-block">
+        <h3>Retention and security</h3>
+        <p>Reasonable care is taken to handle inquiry information responsibly. Information is retained only as long as needed to manage communication, maintain records related to a project discussion, or satisfy legitimate operational needs.</p>
+      </div>
+      <div class="legal-block">
+        <h3>Third-party services</h3>
+        <p>External links and embedded services may have their own privacy practices. If you follow a link to another platform, that platform&apos;s policies control what happens there.</p>
+      </div>
+    `;
+
+    targetElement.innerHTML = `
+<section class="section legal">
+  <button class="button" id="close">
+    x
+  </button>
+  <div class="shell">
+    <label class="eyebrow"><span class="dot"></span> ${eyebrow}</label>
+    <div class="header">
+      <h2 class="hero">${title}</h2>
+      <span class="updated">${updated}</span>
+    </div>
+    <p class="lede">${intro}</p>
+    <div class="content">
+      ${sections}
+    </div>
+    <div class="footer-note">
+      <span>For questions about these policies, email <a href="mailto:contact@dajourchristophe.com">contact@dajourchristophe.com</a>.</span>
+    </div>
+  </div>
+</section>
+`;
+
+    openArticle(null);
+  }
+
   document.getElementById('open-cta').addEventListener('click', function(event)
   {
     if (event.preventDefault)
@@ -794,6 +866,26 @@ void function()
     }
 
     renderSocialMediaSection();
+  });
+
+  termsButton.addEventListener('click', function(event)
+  {
+    if (event.preventDefault)
+    {
+      event.preventDefault();
+    }
+
+    renderLegalSection('terms');
+  });
+
+  privacyButton.addEventListener('click', function(event)
+  {
+    if (event.preventDefault)
+    {
+      event.preventDefault();
+    }
+
+    renderLegalSection('privacy');
   });
 
   trackHero();
