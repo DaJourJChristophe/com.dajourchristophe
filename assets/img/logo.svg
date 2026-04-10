@@ -1,18 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280" fill="none">
   <!-- Tight monogram, no outer padding/background -->
   <g>
-    <rect x="0" y="0" width="280" height="280" rx="36" stroke="#1F1F1F" stroke-width="6"/>
+    <rect x="0" y="0" width="280" height="280" rx="36" stroke="#333" stroke-width="6"/>
 
     <!-- D -->
     <path d="M50 62V218H104C153 218 183 188 183 140C183 92 153 62 104 62H50Z"
-          stroke="#1F1F1F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          stroke="#333" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
 
     <!-- J (lowered ~25%) -->
     <path d="M165 90V202C165 233 145 254 115 254C89 254 72 242 63 223"
-          stroke="#1F1F1F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+          stroke="#333" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
 
     <!-- C -->
     <path d="M240 110C229 83 205 66 173 66C124 66 90 101 90 140C90 179 124 214 173 214C205 214 229 197 240 170"
-          stroke="#1F1F1F" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+          stroke="#333" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
   </g>
 </svg>
