@@ -1,4 +1,8 @@
-.chrome-render-profile
+*.css
+*.html
 
+assets/css/
+assets/js/
 dist/
 node_modules/
+tmp/

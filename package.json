@@ -2,13 +2,15 @@
   "name": "com.dajour",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "assets/js/index.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node dist/hello.js",
+    "build": "node -e \"require('grunt').tasks(['build'])\"",
+    "build:dev": "node -e \"require('grunt').tasks(['dev'])\"",
+    "build:prod": "node -e \"require('grunt').tasks(['prod'])\"",
+    "start": "node assets/js/index.js",
     "test": "npm run build && npm run start"
   },
   "keywords": [],
@@ -16,6 +18,11 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "grunt": "^1.6.1",
+    "grunt-contrib-cssmin": "^5.0.0",
+    "grunt-contrib-uglify": "^5.2.2",
+    "pug": "^3.0.4",
+    "sass": "^1.99.0",
     "typescript": "^6.0.2"
   }
 }

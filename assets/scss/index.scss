@@ -1,4 +1,5 @@
 @charset "UTF-8";
+
 :root {
   --sidebar-width: 70px;
   --main-width: calc(100% - (2 * var(--sidebar-width)));
@@ -11,6 +12,7 @@
 }
 
 /* * { outline: 1px solid red } */
+
 * {
   box-sizing: border-box;
   -webkit-user-select: none;
@@ -34,22 +36,19 @@ body {
   overflow: hidden !important;
   line-height: 1.5;
   color: #222;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 14px;
   background-color: #d4d4d4;
   -webkit-user-drag: none;
 }
 
 @keyframes background-entry-animation {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+    to { opacity: 1; }
 }
+
 body::before {
-  content: "";
+  content: '';
   position: absolute;
   display: block;
   top: 0;
@@ -57,7 +56,7 @@ body::before {
   width: 100%;
   height: 100vh;
   opacity: 0;
-  background-image: url("../img/profile.png");
+  background-image: url('../img/profile.png');
   background-attachment: local;
   background-position: top center;
   background-repeat: no-repeat;
@@ -68,13 +67,10 @@ body::before {
 }
 
 @keyframes splash-animation {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(-100vh);
-  }
+  from { transform: translateY(     0); }
+    to { transform: translateY(-100vh); }
 }
+
 body .page {
   position: relative;
   display: grid;
@@ -83,22 +79,35 @@ body .page {
   padding: 0 30px;
   cursor: default;
   background-color: #d4d4d4;
-  grid-template-areas: "t t t" "n n n" "s s s" "l b b" "l f f" "a a a";
-  grid-template-columns: var(--sidebar-width) var(--main-width) var(--sidebar-width);
-  grid-template-rows: var(--splash-height) var(--navigation-height) var(--spacer-height) var(--sidebar-height) var(--footer-height) var(--article-height);
+  grid-template-areas:
+    't t t'
+    'n n n'
+    's s s'
+    'l b b'
+    'l f f'
+    'a a a';
+
+  grid-template-columns: var(--sidebar-width)
+                         var(--main-width)
+                         var(--sidebar-width);
+
+  grid-template-rows: var(--splash-height)
+                      var(--navigation-height)
+                      var(--spacer-height)
+                      var(--sidebar-height)
+                      var(--footer-height)
+                      var(--article-height);
+
   transform: translateY(0);
   animation: splash-animation 240ms linear 2s forwards;
   z-index: 1000;
 }
 
 @keyframes splash-entry-animation {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
+  from { opacity: 1; }
+    to { opacity: 0; }
 }
+
 .page .splash {
   position: relative;
   display: flex;
@@ -132,12 +141,12 @@ body .page {
   display: block;
   color: #111;
   line-height: 1.05;
-  padding: 0.1em 0.12em 0.24em 0.08em;
+  padding: .1em .12em .24em .08em;
   white-space: nowrap;
-  font-family: "Meow Script", "Segoe Script", "Brush Script MT", cursive;
+  font-family: 'Meow Script', 'Segoe Script', 'Brush Script MT', cursive;
   font-size: clamp(4.8rem, 6.9vw, 8.3rem);
   font-weight: 400;
-  -webkit-text-stroke: 0.35px #d4d4d4;
+  -webkit-text-stroke: .35px #d4d4d4;
   paint-order: stroke fill;
   clip-path: inset(0 100% 0 0);
   -webkit-clip-path: inset(0 100% 0 0);
@@ -154,13 +163,10 @@ body .page {
 }
 
 @keyframes navigation-entry-animation {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+    to { opacity: 1; }
 }
+
 .page .navigation {
   display: flex;
   justify-content: center;
@@ -266,11 +272,12 @@ body .page {
   padding: 0;
   color: #444;
   font-size: 97.5%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   border: none;
   background: 0 0 !important;
   border-radius: 0;
@@ -301,7 +308,7 @@ body .page {
 }
 
 .navigation .brand-logo text {
-  font-family: "Meow Script", cursive;
+  font-family: 'Meow Script', cursive;
   font-size: 4.5rem;
   font-style: normal;
   font-weight: 400;
@@ -317,13 +324,10 @@ body .page {
 }
 
 @keyframes left-menu-entry-animation {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0.6;
-  }
+  from { opacity: 0.0; }
+    to { opacity: 0.6; }
 }
+
 .page .left-menu {
   grid-area: l;
   padding: 10.5rem 0;
@@ -373,11 +377,12 @@ body .page {
 
 .left-menu .list > .list-item span {
   color: #888;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   transform: rotate(-90deg);
   white-space: nowrap;
 }
@@ -391,6 +396,7 @@ body .page {
   --title-track-y: 0px;
   --text-track-x: 0px;
   --text-track-y: 0px;
+
   position: relative;
   grid-area: b;
   padding: 26.5rem 0 0 12.5rem;
@@ -400,6 +406,7 @@ body .page {
 .banner .hero {
   --hero-track-x: 0px;
   --hero-track-y: 0px;
+
   position: absolute;
   display: inline-block;
   margin: 0;
@@ -407,7 +414,7 @@ body .page {
   left: 12.5rem;
   color: #262525;
   font-size: 150%;
-  font-family: "Cossette Texte", sans-serif;
+  font-family: 'Cossette Texte', sans-serif;
   font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
@@ -418,35 +425,25 @@ body .page {
 }
 
 @keyframes banner-hero-left-text-entry-animation {
-  from {
-    opacity: 0.1;
-    transform: translateX(-20%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: .1; transform: translateX(-20%); }
+    to { opacity:  1; transform: translateX(   0); }
 }
+
 .banner .hero .left-text {
   display: inline-block;
-  opacity: 0.1;
+  opacity: .1;
   transform: translateX(-20%);
   animation: banner-hero-left-text-entry-animation 240ms linear 2.25s forwards;
 }
 
 @keyframes banner-hero-right-text-entry-animation {
-  from {
-    opacity: 0.1;
-    transform: translateX(20%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: .1; transform: translateX(20%); }
+    to { opacity:  1; transform: translateX(  0); }
 }
+
 .banner .hero .right-text {
   display: inline-block;
-  opacity: 0.1;
+  opacity: .1;
   transform: translateX(20%);
   animation: banner-hero-right-text-entry-animation 240ms linear 2.25s forwards;
 }
@@ -504,40 +501,37 @@ body .page {
   line-height: 1;
   color: #000;
   font-size: 360%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 200;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .banner .right-panel span {
   margin: 0 0 0 3px;
   color: #666;
   font-size: 90%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 @keyframes banner-title-entry-animation {
-  from {
-    opacity: 0.1;
-    transform: translate(20%, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(var(--title-track-x), var(--title-track-y), 0);
-  }
+  from { opacity: .1; transform: translate(20%, 0); }
+    to { opacity:  1; transform: translate3d(var(--title-track-x), var(--title-track-y), 0); }
 }
+
 .banner .title {
   max-width: 40rem;
   margin: 11.5rem 0 0 0;
-  opacity: 0.1;
+  opacity: .1;
   color: #000;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   font-size: 245%;
   font-weight: 400;
   font-style: normal;
@@ -551,35 +545,32 @@ body .page {
   margin-left: 8px;
   color: #444;
   font-size: 60%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 300;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 @keyframes banner-text-entry-animation {
-  from {
-    opacity: 0.1;
-    transform: translate(-20%, 0);
-  }
-  to {
-    opacity: 1;
-    transform: translate3d(var(--text-track-x), var(--text-track-y), 0);
-  }
+  from { opacity: .1; transform: translate(-20%, 0); }
+    to { opacity:  1; transform: translate3d(var(--text-track-x), var(--text-track-y), 0); }
 }
+
 .banner .text {
   max-width: 42.5rem;
   margin: 20px 0 8.5rem 0;
   line-height: 1.6;
-  opacity: 0.1;
+  opacity: .1;
   color: #202020;
   font-size: 110%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   shape-rendering: geometricPrecision;
   text-rendering: geometricPrecision;
   transform: translate3d(var(--text-track-x), var(--text-track-y), 0);
@@ -587,13 +578,10 @@ body .page {
 }
 
 @keyframes banner-link-entry-animation {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+    to { opacity: 1; }
 }
+
 .banner .link {
   max-width: 19rem;
   display: flex;
@@ -602,12 +590,13 @@ body .page {
   padding: 12px 20px 12.5px 20px;
   opacity: 0;
   color: #111;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-size: 105%;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   border: 1px solid #111;
   background: 0 0;
   border-radius: 40px;
@@ -640,13 +629,10 @@ body .page {
 }
 
 @keyframes banner-label-animation {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 0.65;
-  }
+  from { opacity: .00; }
+    to { opacity: .65; }
 }
+
 .banner .label {
   position: absolute;
   top: 4.5rem;
@@ -655,12 +641,12 @@ body .page {
   opacity: 0;
   color: #d4d4d4;
   font-size: 1000%;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   font-weight: 400;
   font-style: normal;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.055), -1px -1px 1px rgba(0, 0, 0, 0.055);
+  text-shadow: 1px 1px 1px rgba(255,255,255,.055), -1px -1px 1px rgba(0,0,0,.055);
   animation: banner-label-animation 240ms linear 2.5s forwards;
   z-index: -1;
 }
@@ -688,12 +674,12 @@ body .page {
 }
 
 .footer .legal-link {
-  padding: 0.95rem 1.55rem;
+  padding: .95rem 1.55rem;
   color: #555;
   font-size: 1.18rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: .04em;
   border: 1px solid rgba(0, 0, 0, 0.14);
   background: rgba(255, 255, 255, 0.16);
   border-radius: 999px;
@@ -724,7 +710,7 @@ body .page {
   justify-content: flex-start;
   opacity: 0;
   transform: translateY(0%);
-  animation: scroll-indicator-animation 4s cubic-bezier(0.17, 0.67, 0.83, 0.67) 0.5s infinite forwards;
+  animation: scroll-indicator-animation 4s cubic-bezier(.17,.67,.83,.67) .5s infinite forwards;
 }
 
 @keyframes scroll-indicator-animation {
@@ -748,6 +734,7 @@ body .page {
     transform: translateY(57%);
   }
 }
+
 .scroll-indicator .indicator-icon {
   display: block;
   width: 100px;
@@ -759,7 +746,7 @@ body .page {
 .scroll-indicator .indicator-label {
   margin-top: -12px;
   color: currentColor;
-  font-size: 0.9rem;
+  font-size: .9rem;
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.2rem;
@@ -774,7 +761,7 @@ body .page {
   line-height: 1;
   color: #111;
   font-size: 90%;
-  font-family: "Google Sans Code", monospace;
+  font-family: 'Google Sans Code', monospace;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
@@ -797,6 +784,7 @@ body .page {
   --about-image-front-y: 0px;
   --about-image-back-x: 0px;
   --about-image-back-y: 0px;
+
   position: relative;
   display: block;
   grid-area: a;
@@ -814,6 +802,7 @@ body .page {
 
 .article .section {
   --background-color: #efedee;
+
   position: relative;
   display: flex;
   flex-direction: column;
@@ -826,11 +815,11 @@ body .page {
   background-color: var(--background-color);
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
-  box-shadow: 0 -1px 2.5px 0 rgba(0, 0, 0, 0.015);
+  box-shadow: 0 -1px 2.5px 0 rgba(0, 0, 0, .015);
 }
 
 .article .section.about-me {
-  background-image: url("../img/background.svg");
+  background-image: url('../img/background.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   box-shadow: none;
@@ -901,11 +890,12 @@ body .page {
   line-height: 1.6;
   color: #222;
   font-size: 110%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .section .fig {
@@ -940,7 +930,7 @@ body .page {
   right: 0;
   bottom: 0;
   opacity: 0.85;
-  filter: grayscale(97.5%) blur(0.95px);
+  filter: grayscale(97.5%) blur(.95px);
   border-radius: 40rem;
   transform: translate3d(var(--about-image-back-x), var(--about-image-back-y), 0);
   z-index: 7000;
@@ -952,7 +942,7 @@ body .page {
   line-height: 1.3;
   color: #333;
   font-size: 300%;
-  font-family: "Cossette Texte", sans-serif;
+  font-family: 'Cossette Texte', sans-serif;
   font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
@@ -978,7 +968,7 @@ body .page {
   display: inline-block;
   width: 100%;
   color: #2f2f2f;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   font-size: 55%;
   font-style: normal;
   shape-rendering: geometricPrecision;
@@ -993,11 +983,12 @@ body .page {
   line-height: 1.8;
   color: #303030;
   font-size: 105%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .section .text strong {
@@ -1012,12 +1003,13 @@ body .page {
   color: #111;
   padding: 1.25rem 0;
   line-height: 1;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-size: 110%;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   border: 1px solid #000;
   border-radius: 20px;
   text-decoration: none;
@@ -1034,9 +1026,9 @@ body .page {
   position: absolute;
   bottom: -30px;
   left: -50px;
-  opacity: 0.018;
+  opacity: .018;
   font-size: 800%;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   font-weight: 400;
   font-style: normal;
   writing-mode: vertical-rl;
@@ -1045,25 +1037,25 @@ body .page {
 .section .label:nth-child(4) {
   bottom: 0;
   left: -30px;
-  opacity: 0.012;
+  opacity: .012;
 }
 
 .section .label:nth-child(5) {
   bottom: 30px;
   left: 0;
-  opacity: 0.009;
+  opacity: .009;
 }
 
 .section .label:nth-child(6) {
   bottom: 60px;
   left: 30px;
-  opacity: 0.002;
+  opacity: .002;
 }
 
 .section .label:nth-child(7) {
   bottom: 90px;
   left: 60px;
-  opacity: 0.001;
+  opacity: .001;
 }
 
 .article .section.experience {
@@ -1090,7 +1082,9 @@ body .page {
   height: 100%;
   overflow: hidden;
   border-radius: 3.4rem;
-  background: linear-gradient(rgba(0, 0, 0, 0.43), rgba(0, 0, 0, 0.39)), url("../img/bikes.png");
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.43), rgba(0, 0, 0, 0.39)),
+    url('../img/bikes.png');
   background-position: center right;
   background-size: cover;
   background-repeat: no-repeat;
@@ -1108,20 +1102,20 @@ body .page {
 }
 
 .section.experience .copy::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   left: -2.8rem;
   width: calc(100% + 26rem);
   height: 100%;
   background-color: #f5f3f2;
-  -webkit-mask: url("../img/background.svg") left top/100% 100% no-repeat;
-  mask: url("../img/background.svg") left top/100% 100% no-repeat;
+  -webkit-mask: url('../img/background.svg') left top / 100% 100% no-repeat;
+  mask: url('../img/background.svg') left top / 100% 100% no-repeat;
   z-index: -1;
 }
 
 .section.experience .copy::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 8rem;
   bottom: 0;
@@ -1140,16 +1134,16 @@ body .page {
   display: inline-flex;
   align-items: center;
   margin: 0 0 2rem;
-  letter-spacing: 0.34em;
+  letter-spacing: .34em;
   color: #858585;
   font-size: 1.1rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
 .section.experience .eyebrow .dot {
-  width: 0.55rem;
-  height: 0.55rem;
+  width: .55rem;
+  height: .55rem;
   margin-right: 1.4rem;
   background-color: #111;
   border-radius: 50%;
@@ -1157,11 +1151,11 @@ body .page {
 
 .section.experience .hero {
   margin: 0 0 2.1rem;
-  line-height: 0.86;
+  line-height: .86;
   letter-spacing: -0.28rem;
   color: #141414;
   font-size: clamp(7.4rem, 7vw, 10.4rem);
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
@@ -1171,7 +1165,7 @@ body .page {
   line-height: 1.1;
   color: #2f2f2f;
   font-size: clamp(2.3rem, 2vw, 3.05rem);
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   font-weight: 400;
 }
 
@@ -1181,7 +1175,7 @@ body .page {
   line-height: 1.72;
   color: #4d4d4d;
   font-size: 1.52rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   text-align: left;
 }
 
@@ -1192,7 +1186,7 @@ body .page {
   padding: 1.35rem 3rem;
   color: #212121;
   font-size: 1.55rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 500;
   border: 1px solid rgba(0, 0, 0, 0.32);
   border-radius: 999px;
@@ -1215,20 +1209,22 @@ body .page {
   position: absolute;
   left: -9.8rem;
   bottom: 9.8rem;
-  opacity: 0.022;
-  letter-spacing: 0.08em;
+  opacity: .022;
+  letter-spacing: .08em;
   color: #111;
   font-size: 10rem;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
 }
 
 .section.experience .visual::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.16)), radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.08), transparent 26%);
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.16)),
+    radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.08), transparent 26%);
 }
 
 .section.experience .meta {
@@ -1237,15 +1233,15 @@ body .page {
   bottom: 6.6rem;
   z-index: 2;
   padding-left: 2.2rem;
-  letter-spacing: 0.24em;
+  letter-spacing: .24em;
   color: rgba(255, 255, 255, 0.82);
   font-size: 1.08rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
 .section.experience .meta::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   top: 50%;
@@ -1293,11 +1289,12 @@ body .page {
 .header label {
   color: #444;
   font-size: 95%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .header .hero {
@@ -1305,11 +1302,12 @@ body .page {
   letter-spacing: -1.5px;
   color: #262525;
   font-size: 450%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 600;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   shape-rendering: geometricPrecision;
   text-rendering: geometricPrecision;
 }
@@ -1321,11 +1319,12 @@ body .page {
 
 .header .text {
   color: #333;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .section.services .content {
@@ -1377,11 +1376,12 @@ body .page {
   width: 3%;
   color: #222;
   font-size: 110%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .content .list .list > .list-item:nth-child(2) {
@@ -1390,9 +1390,9 @@ body .page {
 
 .content .list .list > .list-item:nth-child(3) {
   width: 33%;
-  letter-spacing: -0.5px;
+  letter-spacing: -.5px;
   font-size: 205%;
-  font-family: "Cossette Texte", sans-serif;
+  font-family: 'Cossette Texte', sans-serif;
   font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
@@ -1414,11 +1414,12 @@ body .page {
   margin-bottom: 0;
   color: #444;
   font-size: 111.5%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .content .button {
@@ -1478,11 +1479,12 @@ body .page {
 .footer span {
   color: #444;
   font-size: 105%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 .footer button {
@@ -1490,11 +1492,12 @@ body .page {
   padding: 2rem 0;
   color: #222;
   font-size: 112.5%;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
-  font-variation-settings: "wdth" 100;
+  font-variation-settings:
+    "wdth" 100;
   border: none;
   border-bottom: 2px solid #aaa;
   background: 0 0;
@@ -1563,18 +1566,18 @@ body .page {
   display: inline-flex;
   align-items: center;
   margin: 0 0 2rem;
-  letter-spacing: 0.14em;
+  letter-spacing: .14em;
   color: #9a9a9a;
   font-size: 1.1rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
 .section.social-media .eyebrow .dot,
 .section.contact .eyebrow .dot,
 .section.legal .eyebrow .dot {
-  width: 0.55rem;
-  height: 0.55rem;
+  width: .55rem;
+  height: .55rem;
   margin-right: 1.2rem;
   background-color: #111;
   border-radius: 50%;
@@ -1584,11 +1587,11 @@ body .page {
 .section.contact .hero,
 .section.legal .hero {
   margin: 0 0 2.4rem;
-  line-height: 0.92;
+  line-height: .92;
   letter-spacing: -0.18rem;
   color: #232323;
   font-size: clamp(5.6rem, 5.8vw, 8.2rem);
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 600;
   text-transform: none;
 }
@@ -1601,7 +1604,7 @@ body .page {
   line-height: 1.7;
   color: #4a4a4a;
   font-size: 1.8rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.social-media .social-list {
@@ -1645,7 +1648,7 @@ body .page {
 
 .section.social-media .name {
   font-size: 3rem;
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   color: #2d2d2d;
 }
 
@@ -1662,10 +1665,10 @@ body .page {
 .section.social-media .footer-note,
 .section.contact .footer-note {
   margin-top: auto;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
   color: #9a9a9a;
   font-size: 1.2rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
@@ -1678,10 +1681,10 @@ body .page {
 .section.contact .meta {
   display: block;
   margin: 0 0 1rem;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
   color: #979797;
   font-size: 1.15rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
@@ -1693,7 +1696,7 @@ body .page {
 .section.contact .email {
   color: #313131;
   font-size: clamp(3rem, 3.4vw, 5rem);
-  font-family: "Instrument Serif", serif;
+  font-family: 'Instrument Serif', serif;
   text-decoration: none;
 }
 
@@ -1720,7 +1723,7 @@ body .page {
 
 .section.contact .detail-grid {
   display: grid;
-  grid-template-columns: 1.15fr 0.95fr;
+  grid-template-columns: 1.15fr .95fr;
   width: 100%;
   padding-top: 4rem;
 }
@@ -1748,11 +1751,11 @@ body .page {
   line-height: 1.7;
   color: #474747;
   font-size: 1.55rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.contact .bullet-item::before {
-  content: "→";
+  content: '→';
   position: absolute;
   top: 0;
   left: 0;
@@ -1785,11 +1788,11 @@ body .page {
 
 .section.contact .expect-item .copy strong {
   display: block;
-  margin-bottom: 0.5rem;
-  letter-spacing: 0.04em;
+  margin-bottom: .5rem;
+  letter-spacing: .04em;
   color: #4b4b4b;
   font-size: 1.2rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 700;
 }
 
@@ -1798,7 +1801,7 @@ body .page {
   line-height: 1.7;
   color: #666;
   font-size: 1.45rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.legal .shell {
@@ -1816,7 +1819,7 @@ body .page {
   margin-bottom: 3rem;
   color: #878787;
   font-size: 1.25rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.legal .content {
@@ -1836,7 +1839,7 @@ body .page {
   margin: 0 0 1.2rem;
   color: #252525;
   font-size: 2rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-weight: 600;
 }
 
@@ -1845,7 +1848,7 @@ body .page {
   line-height: 1.8;
   color: #555;
   font-size: 1.55rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.legal .footer-note {
@@ -1855,7 +1858,7 @@ body .page {
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   color: #7f7f7f;
   font-size: 1.35rem;
-  font-family: "Roboto", sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 .section.legal .footer-note a {
@@ -1863,4 +1866,3 @@ body .page {
   text-decoration: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.18);
 }
-/*# sourceMappingURL=index.css.map */

@@ -1,412 +1,543 @@
-
-
-void function()
-{
-  'use strict';
-
-  function preventDefault(event)
-  {
-    event.preventDefault();
-  }
-
-  function setupSplashCanvas()
-  {
-    var canvas = document.getElementById('splash-canvas');
-    var clip = document.getElementById('splash-signature-clip');
-    var text = document.getElementById('splash-signature-text');
-    var context;
-    var currentProgress = 0;
-    var startTime = 0;
-    var delay = 70;
-    var duration = 1250;
-    var frame = 0;
-    var frameFallback = 0;
-    var layout;
-
-    if (!canvas || !clip || !text || !canvas.getContext) {
-      return;
+"use strict";
+void (function () {
+    'use strict';
+    let AppStateKind;
+    (function (AppStateKind) {
+        AppStateKind["Splash"] = "splash";
+        AppStateKind["Landing"] = "landing";
+        AppStateKind["Toggled"] = "toggled";
+    })(AppStateKind || (AppStateKind = {}));
+    function addListener(target, type, listener) {
+        const eventListener = listener;
+        target.addEventListener(type, eventListener);
+        return function cleanup() {
+            target.removeEventListener(type, eventListener);
+        };
     }
-
-    context = canvas.getContext('2d');
-
-    function ease(progress)
-    {
-      return 1 - Math.pow(1 - progress, 3);
+    function composeCleanups(...cleanups) {
+        return function cleanup() {
+            cleanups.slice().reverse().forEach((teardown) => {
+                teardown();
+            });
+        };
     }
-
-    function draw(progress)
-    {
-      var eased = ease(progress);
-      var inkWidth = Math.max(0, layout.width - layout.inkInsetLeft - layout.inkInsetRight);
-      var revealWidth = inkWidth * eased;
-      var penX = layout.left + layout.inkInsetLeft + revealWidth;
-      var penSwing = Math.sin((eased * Math.PI * 2.8) - .4);
-      var penY = layout.top + (layout.height * .46) + (penSwing * layout.height * .055);
-      var visibleWidth = Math.min(layout.width, layout.inkInsetLeft + revealWidth + layout.inkInsetRight + layout.clipPad);
-      var rightInset = Math.max(0, layout.width - visibleWidth);
-
-      clip.style.width = layout.width.toFixed(2) + 'px';
-      text.style.clipPath = 'inset(0px ' + rightInset.toFixed(2) + 'px 0px 0px)';
-      text.style.webkitClipPath = 'inset(0px ' + rightInset.toFixed(2) + 'px 0px 0px)';
-      text.style.opacity = progress > .78 ? '1' : (.88 + (progress * .12)).toFixed(3);
-
-      context.clearRect(0, 0, canvas.width, canvas.height);
-
-      context.save();
-      context.globalAlpha = .92;
-      context.fillStyle = '#111';
-      context.beginPath();
-      context.arc(penX, penY, Math.max(1.4, layout.height * .016), 0, Math.PI * 2);
-      context.fill();
-      context.restore();
-    }
-
-    function resize()
-    {
-      var splashRect = canvas.parentElement.getBoundingClientRect();
-      var textStyles;
-      var textRect;
-
-      canvas.width = Math.max(320, Math.round(splashRect.width));
-      canvas.height = Math.max(120, Math.round(splashRect.height));
-      clip.style.width = 'auto';
-      textRect = text.getBoundingClientRect();
-      textStyles = window.getComputedStyle(text);
-      clip.style.width = textRect.width.toFixed(2) + 'px';
-      layout = {
-        left: (canvas.width - textRect.width) / 2,
-        top: (canvas.height - textRect.height) / 2,
-        width: textRect.width,
-        height: textRect.height,
-        inkInsetLeft: parseFloat(textStyles.paddingLeft) || 0,
-        inkInsetRight: parseFloat(textStyles.paddingRight) || 0,
-        clipPad: Math.max(28, textRect.height * .24)
-      };
-      draw(currentProgress);
-    }
-
-    function scheduleNextFrame()
-    {
-      frame = window.requestAnimationFrame(animate);
-      frameFallback = window.setTimeout(function()
-      {
-        if (frame) {
-          window.cancelAnimationFrame(frame);
-          frame = 0;
-          animate(performance.now());
+    function resolveElements() {
+        const articleTarget = document.getElementById('article');
+        const openCtaButton = document.getElementById('open-cta');
+        const workWithMeButton = document.getElementById('work-with-me-cta');
+        const experienceButton = document.getElementById('experience-cta');
+        const servicesButton = document.getElementById('services-cta');
+        const aboutMeButton = document.getElementById('about-me-cta');
+        const socialMediaButton = document.getElementById('social-media-cta');
+        const termsButton = document.getElementById('terms-cta');
+        const privacyButton = document.getElementById('privacy-cta');
+        if (!articleTarget ||
+            !openCtaButton ||
+            !workWithMeButton ||
+            !experienceButton ||
+            !servicesButton ||
+            !aboutMeButton ||
+            !socialMediaButton ||
+            !termsButton ||
+            !privacyButton) {
+            return null;
         }
-      }, 34);
+        return {
+            aboutMeButton,
+            articleTarget,
+            experienceButton,
+            openCtaButton,
+            privacyButton,
+            servicesButton,
+            socialMediaButton,
+            termsButton,
+            workWithMeButton,
+            navigationButtons: [experienceButton, servicesButton, aboutMeButton, socialMediaButton]
+        };
     }
-
-    function animate(timestamp)
-    {
-      if (frameFallback) {
-        window.clearTimeout(frameFallback);
+    function isElementTarget(target) {
+        return target instanceof Element;
+    }
+    function isNodeTarget(target) {
+        return target instanceof Node;
+    }
+    function hitsElement(target, element) {
+        return isNodeTarget(target) && element.contains(target);
+    }
+    class GuardController {
+        handleEvent(appEvent) {
+            if (appEvent.type === 'contextmenu' || appEvent.type === 'dragstart' || appEvent.type === 'drop') {
+                appEvent.event.preventDefault();
+            }
+        }
+    }
+    class SplashCanvasController {
+        canvas;
+        clip;
+        text;
+        context;
+        currentProgress = 0;
+        startTime = 0;
+        delay = 70;
+        duration = 1250;
+        frame = 0;
         frameFallback = 0;
-      }
-
-      if (!startTime) {
-        startTime = timestamp;
-      }
-
-      currentProgress = Math.max(0, Math.min((timestamp - startTime - delay) / duration, 1));
-      draw(currentProgress);
-
-      if (currentProgress < 1) {
-        scheduleNextFrame();
-      } else {
+        layout = null;
+        started = false;
+        textStyle;
+        constructor() {
+            this.canvas = document.getElementById('splash-canvas');
+            this.clip = document.getElementById('splash-signature-clip');
+            this.text = document.getElementById('splash-signature-text');
+            this.context = this.canvas ? this.canvas.getContext('2d') : null;
+            this.textStyle = this.text ? this.text.style : null;
+        }
+        start() {
+            if (!this.canvas || !this.clip || !this.text || !this.context || this.started) {
+                return;
+            }
+            this.started = true;
+            const begin = () => {
+                this.resize();
+                this.draw(0.001);
+                this.frame = window.requestAnimationFrame(this.animate);
+            };
+            if (document.fonts && document.fonts.ready) {
+                void Promise.race([
+                    Promise.all([
+                        document.fonts.ready,
+                        document.fonts.load('136px "Meow Script"'),
+                        document.fonts.load('136px "Segoe Script"')
+                    ]),
+                    new Promise(function waitForFont(resolve) {
+                        window.setTimeout(resolve, 350);
+                    })
+                ]).then(begin).catch(begin);
+            }
+            else {
+                begin();
+            }
+        }
+        stop() {
+            this.started = false;
+            this.startTime = 0;
+            if (this.frame) {
+                window.cancelAnimationFrame(this.frame);
+                this.frame = 0;
+            }
+            if (this.frameFallback) {
+                window.clearTimeout(this.frameFallback);
+                this.frameFallback = 0;
+            }
+        }
+        handleEvent(appEvent) {
+            if (appEvent.type === 'resize') {
+                this.resize();
+            }
+        }
+        animate = (timestamp) => {
+            if (!this.started) {
+                return;
+            }
+            if (this.frameFallback) {
+                window.clearTimeout(this.frameFallback);
+                this.frameFallback = 0;
+            }
+            if (!this.startTime) {
+                this.startTime = timestamp;
+            }
+            this.currentProgress = Math.max(0, Math.min((timestamp - this.startTime - this.delay) / this.duration, 1));
+            this.draw(this.currentProgress);
+            if (this.currentProgress < 1) {
+                this.frame = window.requestAnimationFrame(this.animate);
+                this.frameFallback = window.setTimeout(() => {
+                    if (this.frame) {
+                        window.cancelAnimationFrame(this.frame);
+                        this.frame = 0;
+                        this.animate(performance.now());
+                    }
+                }, 34);
+            }
+            else {
+                this.frame = 0;
+                this.draw(1);
+            }
+        };
+        ease(progress) {
+            return 1 - Math.pow(1 - progress, 3);
+        }
+        resize() {
+            if (!this.canvas || !this.clip || !this.text) {
+                return;
+            }
+            const splashParent = this.canvas.parentElement;
+            if (!splashParent) {
+                return;
+            }
+            const splashRect = splashParent.getBoundingClientRect();
+            const textRect = this.text.getBoundingClientRect();
+            const textStyles = window.getComputedStyle(this.text);
+            this.canvas.width = Math.max(320, Math.round(splashRect.width));
+            this.canvas.height = Math.max(120, Math.round(splashRect.height));
+            this.clip.style.width = 'auto';
+            this.clip.style.width = `${textRect.width.toFixed(2)}px`;
+            this.layout = {
+                left: (this.canvas.width - textRect.width) / 2,
+                top: (this.canvas.height - textRect.height) / 2,
+                width: textRect.width,
+                height: textRect.height,
+                inkInsetLeft: parseFloat(textStyles.paddingLeft) || 0,
+                inkInsetRight: parseFloat(textStyles.paddingRight) || 0,
+                clipPad: Math.max(28, textRect.height * 0.24)
+            };
+            this.draw(this.currentProgress);
+        }
+        draw(progress) {
+            if (!this.layout || !this.canvas || !this.clip || !this.textStyle || !this.context) {
+                return;
+            }
+            const eased = this.ease(progress);
+            const inkWidth = Math.max(0, this.layout.width - this.layout.inkInsetLeft - this.layout.inkInsetRight);
+            const revealWidth = inkWidth * eased;
+            const penX = this.layout.left + this.layout.inkInsetLeft + revealWidth;
+            const penSwing = Math.sin((eased * Math.PI * 2.8) - 0.4);
+            const penY = this.layout.top + (this.layout.height * 0.46) + (penSwing * this.layout.height * 0.055);
+            const visibleWidth = Math.min(this.layout.width, this.layout.inkInsetLeft + revealWidth + this.layout.inkInsetRight + this.layout.clipPad);
+            const rightInset = Math.max(0, this.layout.width - visibleWidth);
+            this.clip.style.width = `${this.layout.width.toFixed(2)}px`;
+            this.textStyle.clipPath = `inset(0px ${rightInset.toFixed(2)}px 0px 0px)`;
+            this.textStyle.webkitClipPath = `inset(0px ${rightInset.toFixed(2)}px 0px 0px)`;
+            this.textStyle.opacity = progress > 0.78 ? '1' : (0.88 + (progress * 0.12)).toFixed(3);
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.context.save();
+            this.context.globalAlpha = 0.92;
+            this.context.fillStyle = '#111';
+            this.context.beginPath();
+            this.context.arc(penX, penY, Math.max(1.4, this.layout.height * 0.016), 0, Math.PI * 2);
+            this.context.fill();
+            this.context.restore();
+        }
+    }
+    class HeroTracker {
+        article;
+        banner;
+        hero;
+        heroMaxX = 10;
+        heroMaxY = 6;
+        titleMaxX = 5;
+        titleMaxY = 3;
+        textMaxX = 4;
+        textMaxY = 2.5;
+        aboutHeroMaxX = 12;
+        aboutHeroMaxY = 7;
+        aboutCounterMaxX = 3;
+        aboutCounterMaxY = 1.5;
+        imageFrontMaxX = 8;
+        imageFrontMaxY = 5;
+        imageBackMaxX = 14;
+        imageBackMaxY = 8;
+        trackSpeed = 0.06;
+        imageTrackSpeed = 0.025;
+        idleDelay = 120;
+        targetReturnSpeed = 0.09;
+        position = { x: 0, y: 0 };
+        imagePosition = { x: 0, y: 0 };
+        target = { x: 0, y: 0 };
         frame = 0;
-        draw(1);
-      }
+        lastMoveTime = 0;
+        pointerInside = true;
+        suspended = false;
+        active = false;
+        suspendSelector = [
+            'button',
+            'a',
+            'input',
+            'textarea',
+            'select',
+            'label',
+            '.navigation',
+            '.footer',
+            '.banner .hero',
+            '.banner .title',
+            '.banner .text',
+            '.article .title',
+            '.article .text',
+            '.article p',
+            '.article .sub',
+            '.article .highlight',
+            '.article .button'
+        ].join(', ');
+        constructor() {
+            this.article = document.querySelector('.article');
+            this.banner = document.querySelector('.banner');
+            this.hero = document.querySelector('.banner .hero');
+        }
+        start() {
+            this.active = true;
+        }
+        stop() {
+            this.active = false;
+            this.target.x = 0;
+            this.target.y = 0;
+            this.pointerInside = false;
+            this.lastMoveTime = 0;
+            if (this.frame) {
+                window.cancelAnimationFrame(this.frame);
+                this.frame = 0;
+            }
+            this.render();
+        }
+        handleEvent(appEvent) {
+            if (!this.active || !this.article || !this.banner || !this.hero) {
+                return;
+            }
+            switch (appEvent.type) {
+                case 'pointermove':
+                    this.updateFromPointer(appEvent.event);
+                    return;
+                case 'pointerleave':
+                    this.reset();
+                    return;
+                case 'pointerdown':
+                case 'focusin':
+                case 'keydown':
+                    this.suspend();
+                    return;
+                case 'pointerover':
+                    if (this.shouldSuspend(appEvent.target)) {
+                        this.suspend();
+                    }
+                    return;
+                case 'pointerout':
+                    this.resumeFromPointer(appEvent.event);
+                    return;
+                default:
+                    return;
+            }
+        }
+        animate = (timestamp) => {
+            if (!this.article || !this.banner || !this.hero) {
+                this.frame = 0;
+                return;
+            }
+            if (!this.lastMoveTime) {
+                this.lastMoveTime = timestamp;
+            }
+            if (!this.pointerInside || (timestamp - this.lastMoveTime) >= this.idleDelay) {
+                this.target.x += (0 - this.target.x) * this.targetReturnSpeed;
+                this.target.y += (0 - this.target.y) * this.targetReturnSpeed;
+            }
+            this.position.x += (this.target.x - this.position.x) * this.trackSpeed;
+            this.position.y += (this.target.y - this.position.y) * this.trackSpeed;
+            this.imagePosition.x += (this.target.x - this.imagePosition.x) * this.imageTrackSpeed;
+            this.imagePosition.y += (this.target.y - this.imagePosition.y) * this.imageTrackSpeed;
+            this.render();
+            if (Math.abs(this.target.x - this.position.x) > 0.001 ||
+                Math.abs(this.target.y - this.position.y) > 0.001 ||
+                Math.abs(this.target.x - this.imagePosition.x) > 0.001 ||
+                Math.abs(this.target.y - this.imagePosition.y) > 0.001) {
+                this.frame = window.requestAnimationFrame(this.animate);
+            }
+            else {
+                this.frame = 0;
+            }
+        };
+        requestAnimation() {
+            if (!this.frame) {
+                this.frame = window.requestAnimationFrame(this.animate);
+            }
+        }
+        shouldSuspend(targetNode) {
+            return !!(targetNode instanceof Element && targetNode.closest(this.suspendSelector));
+        }
+        updateFromPointer(event) {
+            if (this.shouldSuspend(event.target)) {
+                this.suspended = true;
+                this.easeBackToOrigin();
+                return;
+            }
+            this.suspended = false;
+            this.pointerInside = true;
+            this.lastMoveTime = performance.now();
+            this.target.x = ((event.clientX / window.innerWidth) - 0.5) * 2;
+            this.target.y = ((event.clientY / window.innerHeight) - 0.5) * 2;
+            this.requestAnimation();
+        }
+        reset() {
+            if (this.suspended) {
+                this.easeBackToOrigin();
+                return;
+            }
+            this.pointerInside = false;
+            this.lastMoveTime = 0;
+            this.requestAnimation();
+        }
+        suspend() {
+            this.suspended = true;
+            this.easeBackToOrigin();
+        }
+        resumeFromPointer(event) {
+            const relatedTarget = event.relatedTarget;
+            if (!relatedTarget || this.shouldSuspend(relatedTarget) || this.shouldSuspend(event.target)) {
+                return;
+            }
+            this.suspended = false;
+            this.updateFromPointer(event);
+        }
+        easeBackToOrigin() {
+            this.target.x = 0;
+            this.target.y = 0;
+            this.pointerInside = false;
+            this.lastMoveTime = 0;
+            this.requestAnimation();
+        }
+        render() {
+            if (!this.article || !this.banner || !this.hero) {
+                return;
+            }
+            this.hero.style.setProperty('--hero-track-x', `${(this.position.x * this.heroMaxX).toFixed(2)}px`);
+            this.hero.style.setProperty('--hero-track-y', `${(this.position.y * this.heroMaxY).toFixed(2)}px`);
+            this.banner.style.setProperty('--title-track-x', `${(this.position.x * -this.titleMaxX).toFixed(2)}px`);
+            this.banner.style.setProperty('--title-track-y', `${(this.position.y * -this.titleMaxY).toFixed(2)}px`);
+            this.banner.style.setProperty('--text-track-x', `${(this.position.x * this.textMaxX).toFixed(2)}px`);
+            this.banner.style.setProperty('--text-track-y', `${(this.position.y * this.textMaxY).toFixed(2)}px`);
+            this.article.style.setProperty('--about-hero-track-x', `${(this.position.x * this.aboutHeroMaxX).toFixed(2)}px`);
+            this.article.style.setProperty('--about-hero-track-y', `${(this.position.y * this.aboutHeroMaxY).toFixed(2)}px`);
+            this.article.style.setProperty('--about-hero-counter-x', `${(this.position.x * -this.aboutCounterMaxX).toFixed(2)}px`);
+            this.article.style.setProperty('--about-hero-counter-y', `${(this.position.y * -this.aboutCounterMaxY).toFixed(2)}px`);
+            this.article.style.setProperty('--about-image-front-x', `${(this.imagePosition.x * this.imageFrontMaxX).toFixed(2)}px`);
+            this.article.style.setProperty('--about-image-front-y', `${(this.imagePosition.y * this.imageFrontMaxY).toFixed(2)}px`);
+            this.article.style.setProperty('--about-image-back-x', `${(this.imagePosition.x * -this.imageBackMaxX).toFixed(2)}px`);
+            this.article.style.setProperty('--about-image-back-y', `${(this.imagePosition.y * -this.imageBackMaxY).toFixed(2)}px`);
+        }
     }
-
-    function start()
-    {
-      resize();
-      draw(.001);
-      window.addEventListener('resize', resize);
-      scheduleNextFrame();
-    }
-
-    if (document.fonts && document.fonts.ready) {
-      Promise.race([
-        Promise.all([
-          document.fonts.ready,
-          document.fonts.load('136px "Meow Script"'),
-          document.fonts.load('136px "Segoe Script"')
-        ]),
-        new Promise(function(resolve)
-        {
-          window.setTimeout(resolve, 350);
-        })
-      ]).then(start).catch(start);
-    } else {
-      start();
-    }
-  }
-
-  function trackHero()
-  {
-    var article = document.querySelector('.article');
-    var banner = document.querySelector('.banner');
-    var hero = document.querySelector('.banner .hero');
-    var heroMaxX = 10;
-    var heroMaxY = 6;
-    var titleMaxX = 5;
-    var titleMaxY = 3;
-    var textMaxX = 4;
-    var textMaxY = 2.5;
-    var aboutHeroMaxX = 12;
-    var aboutHeroMaxY = 7;
-    var aboutCounterMaxX = 3;
-    var aboutCounterMaxY = 1.5;
-    var imageFrontMaxX = 8;
-    var imageFrontMaxY = 5;
-    var imageBackMaxX = 14;
-    var imageBackMaxY = 8;
-    var trackSpeed = .06; // Lower is slower/smoother, higher is faster/snappier.
-    var imageTrackSpeed = .025; // Slower than text so the image stack drags behind.
-    var idleDelay = 120;
-    var targetReturnSpeed = .09;
-    var position = { x: 0, y: 0 };
-    var imagePosition = { x: 0, y: 0 };
-    var target = { x: 0, y: 0 };
-    var frame = 0;
-    var lastMoveTime = 0;
-    var pointerInside = true;
-    var suspended = false;
-    var suspendSelector = [
-      'button',
-      'a',
-      'input',
-      'textarea',
-      'select',
-      'label',
-      '.navigation',
-      '.footer',
-      '.banner .hero',
-      '.banner .title',
-      '.banner .text',
-      '.article .title',
-      '.article .text',
-      '.article p',
-      '.article .sub',
-      '.article .highlight',
-      '.article .button'
-    ].join(', ');
-
-    if (!article || !banner || !hero) {
-      return;
-    }
-
-    function render()
-    {
-      hero.style.setProperty('--hero-track-x', (position.x * heroMaxX).toFixed(2) + 'px');
-      hero.style.setProperty('--hero-track-y', (position.y * heroMaxY).toFixed(2) + 'px');
-      banner.style.setProperty('--title-track-x', (position.x * -titleMaxX).toFixed(2) + 'px');
-      banner.style.setProperty('--title-track-y', (position.y * -titleMaxY).toFixed(2) + 'px');
-      banner.style.setProperty('--text-track-x', (position.x * textMaxX).toFixed(2) + 'px');
-      banner.style.setProperty('--text-track-y', (position.y * textMaxY).toFixed(2) + 'px');
-      article.style.setProperty('--about-hero-track-x', (position.x * aboutHeroMaxX).toFixed(2) + 'px');
-      article.style.setProperty('--about-hero-track-y', (position.y * aboutHeroMaxY).toFixed(2) + 'px');
-      article.style.setProperty('--about-hero-counter-x', (position.x * -aboutCounterMaxX).toFixed(2) + 'px');
-      article.style.setProperty('--about-hero-counter-y', (position.y * -aboutCounterMaxY).toFixed(2) + 'px');
-      article.style.setProperty('--about-image-front-x', (imagePosition.x * imageFrontMaxX).toFixed(2) + 'px');
-      article.style.setProperty('--about-image-front-y', (imagePosition.y * imageFrontMaxY).toFixed(2) + 'px');
-      article.style.setProperty('--about-image-back-x', (imagePosition.x * -imageBackMaxX).toFixed(2) + 'px');
-      article.style.setProperty('--about-image-back-y', (imagePosition.y * -imageBackMaxY).toFixed(2) + 'px');
-    }
-
-    function easeBackToOrigin()
-    {
-      target.x = 0;
-      target.y = 0;
-      pointerInside = false;
-      lastMoveTime = 0;
-      requestAnimation();
-    }
-
-    function shouldSuspend(targetNode)
-    {
-      return !!(targetNode && targetNode.closest && targetNode.closest(suspendSelector));
-    }
-
-    function animate(timestamp)
-    {
-      if (!lastMoveTime) {
-        lastMoveTime = timestamp;
-      }
-
-      if (!pointerInside || (timestamp - lastMoveTime) >= idleDelay) {
-        target.x += (0 - target.x) * targetReturnSpeed;
-        target.y += (0 - target.y) * targetReturnSpeed;
-      }
-
-      position.x += (target.x - position.x) * trackSpeed;
-      position.y += (target.y - position.y) * trackSpeed;
-      imagePosition.x += (target.x - imagePosition.x) * imageTrackSpeed;
-      imagePosition.y += (target.y - imagePosition.y) * imageTrackSpeed;
-
-      render();
-
-      if (
-        Math.abs(target.x - position.x) > .001 ||
-        Math.abs(target.y - position.y) > .001 ||
-        Math.abs(target.x - imagePosition.x) > .001 ||
-        Math.abs(target.y - imagePosition.y) > .001
-      ) {
-        frame = window.requestAnimationFrame(animate);
-      } else {
-        frame = 0;
-      }
-    }
-
-    function requestAnimation()
-    {
-      if (!frame) {
-        frame = window.requestAnimationFrame(animate);
-      }
-    }
-
-    function updateHero(event)
-    {
-      if (shouldSuspend(event.target)) {
-        suspended = true;
-        easeBackToOrigin();
-        return;
-      }
-
-      suspended = false;
-      pointerInside = true;
-      lastMoveTime = performance.now();
-      target.x = ((event.clientX / window.innerWidth) - .5) * 2;
-      target.y = ((event.clientY / window.innerHeight) - .5) * 2;
-
-      requestAnimation();
-    }
-
-    function resetHero()
-    {
-      if (suspended) {
-        easeBackToOrigin();
-        return;
-      }
-
-      pointerInside = false;
-      lastMoveTime = 0;
-
-      requestAnimation();
-    }
-
-    function suspendTracking()
-    {
-      suspended = true;
-      easeBackToOrigin();
-    }
-
-    function resumeTracking(event)
-    {
-      if (shouldSuspend(event.target)) {
-        return;
-      }
-
-      suspended = false;
-      updateHero(event);
-    }
-
-    document.addEventListener('pointermove', updateHero);
-    document.addEventListener('pointerleave', resetHero);
-    document.addEventListener('pointerdown', suspendTracking);
-    document.addEventListener('focusin', suspendTracking);
-    document.addEventListener('keydown', suspendTracking);
-    document.addEventListener('pointerover', function(event)
-    {
-      if (shouldSuspend(event.target)) {
-        suspendTracking();
-      }
-    });
-    document.addEventListener('pointerout', function(event)
-    {
-      var relatedTarget = event.relatedTarget;
-
-      if (!relatedTarget || shouldSuspend(relatedTarget)) {
-        return;
-      }
-
-      resumeTracking(event);
-    });
-  }
-
-  document.addEventListener('contextmenu', preventDefault);
-  document.addEventListener('dragstart', preventDefault);
-  document.addEventListener('drop', preventDefault);
-  setupSplashCanvas();
-
-  const targetElement = document.getElementById('article');
-
-  const experienceButton = document.getElementById('experience-cta');
-  const servicesButton = document.getElementById('services-cta');
-  const aboutMeButton = document.getElementById('about-me-cta');
-  const socialMediaButton = document.getElementById('social-media-cta');
-  const termsButton = document.getElementById('terms-cta');
-  const privacyButton = document.getElementById('privacy-cta');
-
-  const buttons = [
-    experienceButton,
-    servicesButton,
-    aboutMeButton,
-    socialMediaButton,
-  ];
-
-  function clearActiveButtons()
-  {
-    buttons.forEach(button =>
-    {
-      if (button.parentElement.classList.contains('active'))
-      {
-        button.parentElement.classList.remove('active');
-      }
-    });
-  }
-
-  function bindClose()
-  {
-    document.getElementById('close').addEventListener('click', function(event)
-    {
-      if (event.preventDefault)
-      {
-        event.preventDefault();
-      }
-
-      clearActiveButtons();
-
-      if (targetElement.classList.contains('open'))
-      {
-        targetElement.classList.remove('open');
-      }
-    });
-  }
-
-  function openArticle(activeButton)
-  {
-    clearActiveButtons();
-
-    if (activeButton && activeButton.parentElement.classList.contains('active') == false)
-    {
-      activeButton.parentElement.classList.add('active');
-    }
-
-    if (targetElement.classList.contains('open') == false)
-    {
-      targetElement.classList.add('open');
-    }
-
-    bindClose();
-  }
-
-  function renderContactSection()
-  {
-    targetElement.innerHTML = `
+    class PageController {
+        elements;
+        constructor(elements) {
+            this.elements = elements;
+        }
+        closeArticle() {
+            this.clearActiveButtons();
+            this.elements.articleTarget.classList.remove('open');
+        }
+        openArticle(view) {
+            this.renderView(view);
+            this.clearActiveButtons();
+            const activeButton = this.getActiveButton(view);
+            if (activeButton && activeButton.parentElement) {
+                activeButton.parentElement.classList.add('active');
+            }
+            this.elements.articleTarget.classList.add('open');
+        }
+        handleLandingEvent(appEvent, handlers) {
+            if (appEvent.type !== 'click') {
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.openCtaButton) || hitsElement(appEvent.target, this.elements.experienceButton)) {
+                appEvent.event.preventDefault();
+                handlers.onExperience();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.workWithMeButton)) {
+                appEvent.event.preventDefault();
+                handlers.onContact();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.servicesButton)) {
+                appEvent.event.preventDefault();
+                handlers.onServices();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.aboutMeButton)) {
+                appEvent.event.preventDefault();
+                handlers.onAboutMe();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.socialMediaButton)) {
+                appEvent.event.preventDefault();
+                handlers.onSocialMedia();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.termsButton)) {
+                appEvent.event.preventDefault();
+                handlers.onTerms();
+                return;
+            }
+            if (hitsElement(appEvent.target, this.elements.privacyButton)) {
+                appEvent.event.preventDefault();
+                handlers.onPrivacy();
+            }
+        }
+        handleArticleEvent(appEvent, onClose) {
+            if (appEvent.type !== 'click' || !isElementTarget(appEvent.target)) {
+                return;
+            }
+            if (appEvent.target.closest('#close')) {
+                appEvent.event.preventDefault();
+                onClose();
+                return;
+            }
+            if (appEvent.target.closest('#copy-email')) {
+                appEvent.event.preventDefault();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    void navigator.clipboard.writeText('contact@dajourchristophe.com');
+                }
+                return;
+            }
+            if (appEvent.target.closest('#get-in-touch-cta') || appEvent.target.closest('#services-contact-cta')) {
+                appEvent.event.preventDefault();
+                this.openArticle('contact');
+            }
+        }
+        clearActiveButtons() {
+            this.elements.navigationButtons.forEach((button) => {
+                const parent = button.parentElement;
+                if (parent && parent.classList.contains('active')) {
+                    parent.classList.remove('active');
+                }
+            });
+        }
+        getActiveButton(view) {
+            switch (view) {
+                case 'about-me':
+                    return this.elements.aboutMeButton;
+                case 'experience':
+                    return this.elements.experienceButton;
+                case 'services':
+                    return this.elements.servicesButton;
+                case 'social-media':
+                    return this.elements.socialMediaButton;
+                default:
+                    return null;
+            }
+        }
+        renderView(view) {
+            switch (view) {
+                case 'about-me':
+                    this.renderAboutMeSection();
+                    return;
+                case 'contact':
+                    this.renderContactSection();
+                    return;
+                case 'experience':
+                    this.renderExperienceSection();
+                    return;
+                case 'privacy':
+                    this.renderLegalSection('privacy');
+                    return;
+                case 'services':
+                    this.renderServicesSection();
+                    return;
+                case 'social-media':
+                    this.renderSocialMediaSection();
+                    return;
+                case 'terms':
+                    this.renderLegalSection('terms');
+                    return;
+            }
+        }
+        renderContactSection() {
+            this.elements.articleTarget.innerHTML = `
 <section class="section contact">
   <button class="button" id="close">
     x
@@ -480,246 +611,45 @@ void function()
   </div>
 </section>
 `;
-
-    openArticle(null);
-
-    document.getElementById('copy-email').addEventListener('click', function(event)
-    {
-      if (event.preventDefault)
-      {
-        event.preventDefault();
-      }
-
-      if (navigator.clipboard && navigator.clipboard.writeText)
-      {
-        navigator.clipboard.writeText('contact@dajourchristophe.com');
-      }
-    });
-  }
-
-  function renderSocialMediaSection()
-  {
-    targetElement.innerHTML = `
-<section class="section social-media">
-  <button class="button" id="close">
-    x
-  </button>
-  <div class="shell">
-    <label class="eyebrow"><span class="dot"></span> SOCIAL</label>
-    <h2 class="hero">Connect<br>With Me</h2>
-    <p class="lede">A few places I share ideas, build in public, and connect with the community.</p>
-    <ul class="social-list">
-      <li class="social-item">
-        <a class="social-link" href="https://www.instagram.com" target="_blank" rel="noreferrer">
-          <span class="icon-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-              <path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.2 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.5 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.9-26.9 26.9-14.9 0-26.9-12-26.9-26.9 0-14.9 12-26.9 26.9-26.9 14.9 0 26.9 12 26.9 26.9zM398.8 163c-3.9-35.3-13.5-66.6-39.4-92.5S302.2 35 266.9 31.2c-36-4.1-143.8-4.1-179.8 0-35.2 3.9-66.5 13.5-92.5 39.4S35 129.8 31.2 165.1c-4.1 36-4.1 143.8 0 179.8 3.9 35.2 13.5 66.5 39.4 92.5s57.3 35.5 92.5 39.4c36 4.1 143.8 4.1 179.8 0 35.2-3.9 66.5-13.5 92.5-39.4s35.5-57.3 39.4-92.5c4.1-36 4.1-143.7 0-179.7zm-48.2 218c-7.7 19.4-22.7 34.4-42.1 42.1-29.1 11.5-98.1 8.9-130.4 8.9s-101.4 2.6-130.4-8.9c-19.4-7.7-34.4-22.7-42.1-42.1-11.5-29.1-8.9-98.1-8.9-130.4s-2.6-101.4 8.9-130.4c7.7-19.4 22.7-34.4 42.1-42.1 29.1-11.5 98.1-8.9 130.4-8.9s101.4-2.6 130.4 8.9c19.4 7.7 34.4 22.7 42.1 42.1 11.5 29.1 8.9 98.1 8.9 130.4s2.7 101.3-8.9 130.4z"/>
-            </svg>
-          </span>
-          <span class="name">Instagram</span>
-          <span class="arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-              <path d="M512 128C529.7 128 544 142.3 544 160L544 352C544 369.7 529.7 384 512 384C494.3 384 480 369.7 480 352L480 237.3L150.6 566.6C138.1 579.1 117.8 579.1 105.3 566.6C92.8 554.1 92.8 533.8 105.3 521.3L434.7 192L320 192C302.3 192 288 177.7 288 160C288 142.3 302.3 128 320 128L512 128z"/>
-            </svg>
-          </span>
-        </a>
-      </li>
-      <li class="social-item">
-        <a class="social-link" href="https://www.facebook.com" target="_blank" rel="noreferrer">
-          <span class="icon-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
-              <path d="M279.1 288l14.2-92.7h-88.9v-60.1c0-25.4 12.4-50.1 52.2-50.1H297V6.3S260.7 0 226 0c-73.2 0-121.1 44.4-121.1 124.7v70.6H23.4V288h81.5v224h99.5V288h74.7z"/>
-            </svg>
-          </span>
-          <span class="name">Facebook</span>
-          <span class="arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-              <path d="M512 128C529.7 128 544 142.3 544 160L544 352C544 369.7 529.7 384 512 384C494.3 384 480 369.7 480 352L480 237.3L150.6 566.6C138.1 579.1 117.8 579.1 105.3 566.6C92.8 554.1 92.8 533.8 105.3 521.3L434.7 192L320 192C302.3 192 288 177.7 288 160C288 142.3 302.3 128 320 128L512 128z"/>
-            </svg>
-          </span>
-        </a>
-      </li>
-      <li class="social-item">
-        <a class="social-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer">
-          <span class="icon-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-              <path d="M100.28 448H7.4V148.9h92.88zm-46.44-341C24.3 107 0 82.7 0 53.84A53.84 53.84 0 0 1 53.84 0a53.84 53.84 0 0 1 53.84 53.84c0 28.86-24.3 53.16-53.84 53.16zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.3 0-55.7 37.7-55.7 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.7-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z"/>
-            </svg>
-          </span>
-          <span class="name">LinkedIn</span>
-          <span class="arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-              <path d="M512 128C529.7 128 544 142.3 544 160L544 352C544 369.7 529.7 384 512 384C494.3 384 480 369.7 480 352L480 237.3L150.6 566.6C138.1 579.1 117.8 579.1 105.3 566.6C92.8 554.1 92.8 533.8 105.3 521.3L434.7 192L320 192C302.3 192 288 177.7 288 160C288 142.3 302.3 128 320 128L512 128z"/>
-            </svg>
-          </span>
-        </a>
-      </li>
-      <li class="social-item">
-        <a class="social-link" href="https://github.com" target="_blank" rel="noreferrer">
-          <span class="icon-box">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
-              <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-2.9 .3-5.2-1.3-5.2-3.6 0-2 2.3-3.6 5.2-3.6 2.9-.3 5.2 1.3 5.2 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.9 1 5.9 0 6.5-2 .7-2-1.3-4.3-4.3-5.2-2.9-.9-5.9 0-6.5 2.3zm44.2 .4c-2.9 .7-4.9 2.9-4.3 4.9 .7 2 3.6 3 6.5 2.3 2.9-.7 4.9-2.9 4.3-4.9-.7-2-3.6-3-6.5-2.3zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 71.9 205.1 171.5 238.3 12.5 2.3 17.1-5.4 17.1-12 0-5.9-.3-25.6-.3-46.5-69.7 15.1-84.4-29.6-84.4-29.6-11.4-29-27.8-36.7-27.8-36.7-22.7-15.4 1.6-15.1 1.6-15.1 25.2 1.6 38.4 25.9 38.4 25.9 22.3 38.1 58.5 27.1 72.8 20.7 2.3-16.1 8.7-27.1 15.8-33.3-55.7-6.2-114.3-27.8-114.3-124 0-27.5 9.7-49.8 25.9-67.3-2.6-6.2-11.2-31.4 2.6-65.4 0 0 21-6.5 68.6 25.9 20-5.6 41.5-8.4 62.8-8.4s42.8 2.8 62.8 8.4c47.6-32.4 68.6-25.9 68.6-25.9 13.8 34 5.2 59.2 2.6 65.4 16.1 17.4 25.9 39.8 25.9 67.3 0 96.5-58.8 117.8-114.8 124 9 7.7 17.1 22.8 17.1 46 0 33.2-.3 59.9-.3 68 0 6.5 4.5 14.3 17.1 12C424.1 457.1 496 362.9 496 252 496 113.3 383.5 8 244.8 8z"/>
-            </svg>
-          </span>
-          <span class="name">GitHub</span>
-          <span class="arrow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-              <path d="M512 128C529.7 128 544 142.3 544 160L544 352C544 369.7 529.7 384 512 384C494.3 384 480 369.7 480 352L480 237.3L150.6 566.6C138.1 579.1 117.8 579.1 105.3 566.6C92.8 554.1 92.8 533.8 105.3 521.3L434.7 192L320 192C302.3 192 288 177.7 288 160C288 142.3 302.3 128 320 128L512 128z"/>
-            </svg>
-          </span>
-        </a>
-      </li>
-    </ul>
-    <label class="footer-note">BUILDING IN PUBLIC. SHARING THE JOURNEY.</label>
-  </div>
+        }
+        renderAboutMeSection() {
+            this.elements.articleTarget.innerHTML = `
+<section class="section about-me">
+  <button class="button" id="close">x</button>
+  <ul class="list">
+    <li class="list-item">
+      <hr>
+      <h1 class="title">
+        Hey, I'm<br><span class="highlight">Da'Jour J. Christophe</span>
+        <span class="sub">Engineering intelligence from first principles</span>
+      </h1>
+      <p class="text">
+        I engineer adaptive systems that learn, evolve, and perform under real-world constraints. My work combines deep technical rigor with first-principles thinking, building intelligence from the ground up, not from assumptions.
+        <br><br>
+        Prior to his military service, Christophe worked as a <strong>Software Engineer at Drexel University</strong> in Philadelphia, where he designed and developed software systems in a production environment. Building on this experience, he later enlisted in the United States Air Force and served for over eight years.
+        <br><br>
+        After his transition back to civilian life, he transformed that experience into a defining inflection point, leveraging <strong>more than a decade of experience in software design and engineering</strong> to pivot into Data Science. Today, his work focuses on <strong style="color: #000; background-color: #efefef;">experimental, low-latency, end-to-end meta-learning architectures</strong>, with an emphasis on building adaptive systems that operate efficiently in dynamic environments.
+      </p>
+      <a class="link" id="get-in-touch-cta">Let's Build</a>
+    </li>
+    <li class="list-item">
+      <figure class="fig">
+        <img class="img" src="../assets/img/profile2.jpg" alt="#" />
+        <img class="img" src="../assets/img/profile2.jpg" alt="#" />
+      </figure>
+      <span class="quote" style="color: #111"><em>"I don't follow systems. I design them."</em><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #333;">- Da'Jour J. Christophe</span></span>
+    </li>
+  </ul>
+  <label class="label">UNMATCHED</label>
+  <label class="label">UNMATCHED</label>
+  <label class="label">UNMATCHED</label>
+  <label class="label">UNMATCHED</label>
+  <label class="label">UNMATCHED</label>
 </section>
 `;
-
-    openArticle(socialMediaButton);
-  }
-
-  function renderExperienceSection()
-  {
-    targetElement.innerHTML = `
-<section class="section experience">
-  <button class="button" id="close">
-    x
-  </button>
-  <div class="panel">
-    <div class="copy">
-      <div class="copy-inner">
-        <label class="eyebrow"><span class="dot"></span> PROJECT SPOTLIGHT</label>
-        <h2 class="hero">CYCLE<br>PHILLY</h2>
-        <h3 class="subhero">Building a Smarter, More Connected<br>Bike Share System</h3>
-        <p class="text">A data-driven exploration of Philadelphia's bike share ecosystem. I analyzed usage patterns, station performance, and infrastructure gaps to uncover insights that can drive smarter expansion and improve rider experience.</p>
-        <p class="text">The result is an interactive system that turns complex mobility data into clear, actionable decisions for a more connected city.</p>
-        <a class="cta" href="#" aria-label="View Cycle Philly case study">
-          <span>View Case Study</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
-            <path d="M512 128C529.7 128 544 142.3 544 160L544 352C544 369.7 529.7 384 512 384C494.3 384 480 369.7 480 352L480 237.3L150.6 566.6C138.1 579.1 117.8 579.1 105.3 566.6C92.8 554.1 92.8 533.8 105.3 521.3L434.7 192L320 192C302.3 192 288 177.7 288 160C288 142.3 302.3 128 320 128L512 128z"/>
-          </svg>
-        </a>
-      </div>
-      <span class="watermark">CYCLE PHILLY</span>
-    </div>
-    <div class="visual">
-      <span class="meta">DATA &nbsp;•&nbsp; MOBILITY &nbsp;•&nbsp; IMPACT</span>
-    </div>
-  </div>
-</section>
-`;
-
-    openArticle(experienceButton);
-  }
-
-  function renderLegalSection(kind)
-  {
-    var isTerms = kind === 'terms';
-    var title = isTerms ? 'Terms of Service' : 'Privacy Policy';
-    var eyebrow = isTerms ? 'TERMS' : 'PRIVACY';
-    var updated = 'Last updated: April 8, 2026';
-    var intro = isTerms
-      ? 'These terms govern use of this site, project inquiries, and any collaboration that may follow. They are written to set expectations clearly and keep communication straightforward.'
-      : 'This policy explains what information may be collected through this site, how it is used, and the principles that guide how contact and inquiry information is handled.';
-    var sections = isTerms ? `
-      <div class="legal-block">
-        <h3>Use of this site</h3>
-        <p>This site is intended to present professional work, services, and ways to get in touch. You may browse, reference, and share public content for informational purposes, but you may not misuse the site, attempt to disrupt it, or represent its content as your own.</p>
-      </div>
-      <div class="legal-block">
-        <h3>Project inquiries</h3>
-        <p>Submitting a message or inquiry does not create a client relationship, partnership, or guarantee of availability. Any engagement begins only after mutual written agreement on scope, terms, and expectations.</p>
-      </div>
-      <div class="legal-block">
-        <h3>Intellectual property</h3>
-        <p>Unless otherwise noted, the content, writing, visuals, and project materials presented here remain the property of their respective owner. Case study material may reference third-party platforms, organizations, or datasets for descriptive purposes only.</p>
-      </div>
-      <div class="legal-block">
-        <h3>No warranty</h3>
-        <p>This site and its contents are provided as-is for general information. While every effort is made to keep the material accurate and current, no warranty is made regarding completeness, suitability, or uninterrupted availability.</p>
-      </div>
-    ` : `
-      <div class="legal-block">
-        <h3>Information you provide</h3>
-        <p>If you choose to make contact, information such as your name, email address, organization, and message details may be received solely for the purpose of reviewing and responding to your inquiry.</p>
-      </div>
-      <div class="legal-block">
-        <h3>How information is used</h3>
-        <p>Contact information is used to reply to inquiries, evaluate project fit, and continue relevant conversations. It is not sold, rented, or used for unrelated marketing campaigns.</p>
-      </div>
-      <div class="legal-block">
-        <h3>Retention and security</h3>
-        <p>Reasonable care is taken to handle inquiry information responsibly. Information is retained only as long as needed to manage communication, maintain records related to a project discussion, or satisfy legitimate operational needs.</p>
-      </div>
-      <div class="legal-block">
-        <h3>Third-party services</h3>
-        <p>External links and embedded services may have their own privacy practices. If you follow a link to another platform, that platform&apos;s policies control what happens there.</p>
-      </div>
-    `;
-
-    targetElement.innerHTML = `
-<section class="section legal">
-  <button class="button" id="close">
-    x
-  </button>
-  <div class="shell">
-    <label class="eyebrow"><span class="dot"></span> ${eyebrow}</label>
-    <div class="header">
-      <h2 class="hero">${title}</h2>
-      <span class="updated">${updated}</span>
-    </div>
-    <p class="lede">${intro}</p>
-    <div class="content">
-      ${sections}
-    </div>
-    <div class="footer-note">
-      <span>For questions about these policies, email <a href="mailto:contact@dajourchristophe.com">contact@dajourchristophe.com</a>.</span>
-    </div>
-  </div>
-</section>
-`;
-
-    openArticle(null);
-  }
-
-  document.getElementById('open-cta').addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
-    }
-
-    renderExperienceSection();
-  });
-
-  document.getElementById('work-with-me-cta').addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
-    }
-
-    renderContactSection();
-  });
-
-  experienceButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
-    }
-
-    renderExperienceSection();
-  });
-
-  servicesButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
-    }
-
-    targetElement.innerHTML = `
+        }
+        renderServicesSection() {
+            this.elements.articleTarget.innerHTML = `
 <section class="section services">
   <button class="button" id="close">
     x
@@ -789,10 +719,10 @@ void function()
   <div class="footer">
     <ul class="list">
       <li class="list-item">
-        <span >CLEAR THINKING. COMPLEX SYSTEMS. MEASURABLE RESULTS.</span>
+        <span>CLEAR THINKING. COMPLEX SYSTEMS. MEASURABLE RESULTS.</span>
       </li>
       <li class="list-item">
-        <button>
+        <button id="services-contact-cta">
           <span>Lets' Build Something</span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
             <path d="M416 224C398.3 224 384 209.7 384 192C384 174.3 398.3 160 416 160L576 160C593.7 160 608 174.3 608 192L608 352C608 369.7 593.7 384 576 384C558.3 384 544 369.7 544 352L544 269.3L374.6 438.7C362.1 451.2 341.8 451.2 329.3 438.7L224 333.3L86.6 470.6C74.1 483.1 53.8 483.1 41.3 470.6C28.8 458.1 28.8 437.8 41.3 425.3L201.3 265.3C213.8 252.8 234.1 252.8 246.6 265.3L352 370.7L498.7 224L416 224z" />
@@ -803,91 +733,243 @@ void function()
   </div>
 </section>
 `;
-
-    openArticle(servicesButton);
-  });
-
-  aboutMeButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
-    }
-
-    targetElement.innerHTML = `
-<section class="section about-me">
+        }
+        renderSocialMediaSection() {
+            this.elements.articleTarget.innerHTML = `
+<section class="section social-media">
   <button class="button" id="close">
     x
   </button>
-  <ul class="list">
-    <li class="list-item">
-      <hr>
-      <h1 class="title">
-        Hey, I'm<br><span class="highlight">Da'Jour J. Christophe</span>
-        <span class="sub">Engineering intelligence from first principles</span>
-      </h1>
-      <p class="text">I engineer adaptive systems that learn, evolve, and perform under real-world constraints. My work combines deep technical rigor with first-principles thinking—building intelligence from the ground up, not from assumptions.<br><br>Prior to his military service, Christophe worked as a <strong>Software Engineer at Drexel University</strong> in Philadelphia, where he designed and developed software systems in a production environment. Building on this experience, he later enlisted in the United States Air Force and served for over eight years.<br><br>After his transition back to civilian life, he transformed that experience into a defining inflection point—leveraging <strong>more than a decade of experience in software design and engineering</strong> to pivot into Data Science. Today, his work focuses on <strong style="color: #000; background-color: #efefef;">experimental, low-latency, end-to-end meta-learning architectures</strong>, with an emphasis on building adaptive systems that operate efficiently in dynamic environments.</p>
-      <a class="link" id="get-in-touch-cta">Let’s Build</a>
-    </li>
-    <li class="list-item">
-      <figure class="fig">
-        <img src="../assets/img/profile2.jpg" alt="#" class="img" />
-        <img src="../assets/img/profile2.jpg" alt="#" class="img" />
-      </figure>
-      <span class="quote" style="color: #111"><em>"I don’t follow systems. I design them."</em><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #333;">— Da'Jour J. Christophe</span></span>
-    </li>
-  </ul>
-  <label class="label">UNMATCHED</label>
-  <label class="label">UNMATCHED</label>
-  <label class="label">UNMATCHED</label>
-  <label class="label">UNMATCHED</label>
-  <label class="label">UNMATCHED</label>
+  <div class="shell">
+    <label class="eyebrow"><span class="dot"></span> SOCIAL</label>
+    <h2 class="hero">Connect<br>With Me</h2>
+    <p class="lede">A few places I share ideas, build in public, and connect with the community.</p>
+    <ul class="social-list">
+      <li class="social-item"><a class="social-link" href="https://www.instagram.com" target="_blank" rel="noreferrer"><span class="icon-box">IG</span><span class="name">Instagram</span><span class="arrow">&#8599;</span></a></li>
+      <li class="social-item"><a class="social-link" href="https://www.facebook.com" target="_blank" rel="noreferrer"><span class="icon-box">f</span><span class="name">Facebook</span><span class="arrow">&#8599;</span></a></li>
+      <li class="social-item"><a class="social-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer"><span class="icon-box">in</span><span class="name">LinkedIn</span><span class="arrow">&#8599;</span></a></li>
+      <li class="social-item"><a class="social-link" href="https://github.com" target="_blank" rel="noreferrer"><span class="icon-box">GH</span><span class="name">GitHub</span><span class="arrow">&#8599;</span></a></li>
+    </ul>
+    <label class="footer-note">BUILDING IN PUBLIC. SHARING THE JOURNEY.</label>
+  </div>
 </section>
 `;
-
-    document.getElementById('get-in-touch-cta').addEventListener('click', function(event)
-    {
-      if (event.preventDefault)
-      {
-        event.preventDefault();
-      }
-
-      renderContactSection();
-    });
-
-    openArticle(aboutMeButton);
-  });
-
-  socialMediaButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
+        }
+        renderExperienceSection() {
+            this.elements.articleTarget.innerHTML = `
+<section class="section experience">
+  <button class="button" id="close">
+    x
+  </button>
+  <div class="panel">
+    <div class="copy">
+      <div class="copy-inner">
+        <label class="eyebrow"><span class="dot"></span> PROJECT SPOTLIGHT</label>
+        <h2 class="hero">CYCLE<br>PHILLY</h2>
+        <h3 class="subhero">Building a Smarter, More Connected<br>Bike Share System</h3>
+        <p class="text">A data-driven exploration of Philadelphia's bike share ecosystem. I analyzed usage patterns, station performance, and infrastructure gaps to uncover insights that can drive smarter expansion and improve rider experience.</p>
+        <p class="text">The result is an interactive system that turns complex mobility data into clear, actionable decisions for a more connected city.</p>
+        <a class="cta" href="#" aria-label="View Cycle Philly case study"><span>View Case Study</span><span>&#8599;</span></a>
+      </div>
+      <span class="watermark">CYCLE PHILLY</span>
+    </div>
+    <div class="visual">
+      <span class="meta">DATA &bull; MOBILITY &bull; IMPACT</span>
+    </div>
+  </div>
+</section>
+`;
+        }
+        renderLegalSection(kind) {
+            const isTerms = kind === 'terms';
+            const title = isTerms ? 'Terms of Service' : 'Privacy Policy';
+            const eyebrow = isTerms ? 'TERMS' : 'PRIVACY';
+            const updated = 'Last updated: April 8, 2026';
+            const intro = isTerms
+                ? 'These terms govern use of this site, project inquiries, and any collaboration that may follow. They are written to set expectations clearly and keep communication straightforward.'
+                : 'This policy explains what information may be collected through this site, how it is used, and the principles that guide how contact and inquiry information is handled.';
+            this.elements.articleTarget.innerHTML = `
+<section class="section legal">
+  <button class="button" id="close">x</button>
+  <div class="shell">
+    <label class="eyebrow"><span class="dot"></span> ${eyebrow}</label>
+    <div class="header">
+      <h2 class="hero">${title}</h2>
+      <span class="updated">${updated}</span>
+    </div>
+    <p class="lede">${intro}</p>
+    <div class="content">
+      <div class="legal-block"><h3>${isTerms ? 'Use of this site' : 'Information you provide'}</h3><p>${isTerms ? 'This site is intended to present professional work, services, and ways to get in touch.' : 'If you choose to make contact, information such as your name, email address, organization, and message details may be received solely for the purpose of reviewing and responding to your inquiry.'}</p></div>
+      <div class="legal-block"><h3>${isTerms ? 'Project inquiries' : 'How information is used'}</h3><p>${isTerms ? 'Submitting a message or inquiry does not create a client relationship, partnership, or guarantee of availability.' : 'Contact information is used to reply to inquiries, evaluate project fit, and continue relevant conversations.'}</p></div>
+      <div class="legal-block"><h3>${isTerms ? 'Intellectual property' : 'Retention and security'}</h3><p>${isTerms ? 'Unless otherwise noted, the content, writing, visuals, and project materials presented here remain the property of their respective owner.' : 'Reasonable care is taken to handle inquiry information responsibly and retain it only as long as needed.'}</p></div>
+      <div class="legal-block"><h3>${isTerms ? 'No warranty' : 'Third-party services'}</h3><p>${isTerms ? 'This site and its contents are provided as-is for general information.' : 'External links and embedded services may have their own privacy practices.'}</p></div>
+    </div>
+    <div class="footer-note">
+      <span>For questions about these policies, email <a href="mailto:contact@dajourchristophe.com">contact@dajourchristophe.com</a>.</span>
+    </div>
+  </div>
+</section>
+`;
+        }
     }
-
-    renderSocialMediaSection();
-  });
-
-  termsButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
+    class AppState {
+        context;
+        controller;
+        receivers = [];
+        constructor(context, controller) {
+            this.context = context;
+            this.controller = controller;
+        }
+        handleEvent(appEvent) {
+            this.receivers.forEach((receiver) => {
+                receiver.handleEvent(appEvent);
+            });
+        }
     }
-
-    renderLegalSection('terms');
-  });
-
-  privacyButton.addEventListener('click', function(event)
-  {
-    if (event.preventDefault)
-    {
-      event.preventDefault();
+    class InteractiveState extends AppState {
+        heroTracker = new HeroTracker();
+        enter() {
+            this.heroTracker.start();
+            this.receivers.push(this.heroTracker);
+        }
+        exit() {
+            this.heroTracker.stop();
+            this.receivers.length = 0;
+        }
+        handleEvent(appEvent) {
+            super.handleEvent(appEvent);
+            this.controller.handleLandingEvent(appEvent, {
+                onAboutMe: () => {
+                    this.context.showArticle('about-me');
+                },
+                onContact: () => {
+                    this.context.showArticle('contact');
+                },
+                onExperience: () => {
+                    this.context.showArticle('experience');
+                },
+                onPrivacy: () => {
+                    this.context.showArticle('privacy');
+                },
+                onServices: () => {
+                    this.context.showArticle('services');
+                },
+                onSocialMedia: () => {
+                    this.context.showArticle('social-media');
+                },
+                onTerms: () => {
+                    this.context.showArticle('terms');
+                }
+            });
+        }
     }
-
-    renderLegalSection('privacy');
-  });
-
-  trackHero();
-
-}();
+    class SplashState extends AppState {
+        kind = AppStateKind.Splash;
+        splashCanvas = new SplashCanvasController();
+        timeoutId = 0;
+        enter() {
+            this.receivers.push(this.splashCanvas);
+            this.splashCanvas.start();
+            this.timeoutId = window.setTimeout(() => {
+                this.context.showLanding();
+            }, 2500);
+        }
+        exit() {
+            if (this.timeoutId) {
+                window.clearTimeout(this.timeoutId);
+                this.timeoutId = 0;
+            }
+            this.splashCanvas.stop();
+            this.receivers.length = 0;
+        }
+    }
+    class LandingState extends InteractiveState {
+        kind = AppStateKind.Landing;
+        enter() {
+            super.enter();
+            this.controller.closeArticle();
+        }
+    }
+    class ToggledState extends InteractiveState {
+        kind = AppStateKind.Toggled;
+        view;
+        constructor(context, controller, view) {
+            super(context, controller);
+            this.view = view;
+        }
+        enter() {
+            super.enter();
+            this.controller.openArticle(this.view);
+        }
+        handleEvent(appEvent) {
+            super.handleEvent(appEvent);
+            this.controller.handleArticleEvent(appEvent, () => {
+                this.context.showLanding();
+            });
+        }
+    }
+    class AppContext {
+        controller;
+        guard = new GuardController();
+        cleanup;
+        state = null;
+        constructor(controller) {
+            this.controller = controller;
+            this.cleanup = this.bindEventSources();
+        }
+        start() {
+            this.transitionTo(new SplashState(this, this.controller));
+        }
+        stop() {
+            this.state?.exit();
+            this.cleanup();
+        }
+        showArticle(view) {
+            this.transitionTo(new ToggledState(this, this.controller, view));
+        }
+        showLanding() {
+            this.transitionTo(new LandingState(this, this.controller));
+        }
+        bindEventSources() {
+            return composeCleanups(this.bindDocumentEvent('click'), this.bindDocumentEvent('contextmenu'), this.bindDocumentEvent('dragstart'), this.bindDocumentEvent('drop'), this.bindDocumentEvent('focusin'), this.bindDocumentEvent('keydown'), this.bindDocumentEvent('pointerdown'), this.bindDocumentEvent('pointerleave'), this.bindDocumentEvent('pointermove'), this.bindDocumentEvent('pointerout'), this.bindDocumentEvent('pointerover'), addListener(window, 'resize', (event) => {
+                this.dispatchEvent({ event, target: event.target, type: 'resize' });
+            }));
+        }
+        bindDocumentEvent(type) {
+            return addListener(document, type, (event) => {
+                this.dispatchEvent({ event, target: event.target, type });
+            });
+        }
+        dispatchEvent(appEvent) {
+            this.guard.handleEvent(appEvent);
+            this.state?.handleEvent(appEvent);
+        }
+        transitionTo(nextState) {
+            this.state?.exit();
+            this.state = nextState;
+            this.state.enter();
+        }
+    }
+    const elements = resolveElements();
+    if (!elements) {
+        const guard = new GuardController();
+        composeCleanups(addListener(document, 'contextmenu', (event) => {
+            guard.handleEvent({ event, target: event.target, type: 'contextmenu' });
+        }), addListener(document, 'dragstart', (event) => {
+            guard.handleEvent({ event, target: event.target, type: 'dragstart' });
+        }), addListener(document, 'drop', (event) => {
+            guard.handleEvent({ event, target: event.target, type: 'drop' });
+        }));
+        const splashCanvas = new SplashCanvasController();
+        splashCanvas.start();
+        addListener(window, 'resize', (event) => {
+            splashCanvas.handleEvent({ event, target: event.target, type: 'resize' });
+        });
+    }
+    else {
+        const controller = new PageController(elements);
+        const app = new AppContext(controller);
+        app.start();
+    }
+}());
+//# sourceMappingURL=index.js.map

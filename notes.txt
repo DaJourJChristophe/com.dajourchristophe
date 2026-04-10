@@ -3,11 +3,9 @@
 
 - Responsive / Cross-Compatible
 
-- Photographer
+- Photographer (sat)
 
 - UAT
-
-- Backend API
 
 - Logo
 
