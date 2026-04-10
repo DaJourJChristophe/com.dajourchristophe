@@ -1,5 +1,6 @@
 *.css
 *.html
+*.map
 
 assets/css/
 assets/js/
