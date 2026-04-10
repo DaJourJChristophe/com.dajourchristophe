@@ -1,108 +1,12 @@
 doctype html
 html.no-js(dir='ltr', lang='en-US')
-  head
-    meta(charset='utf-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1.0, user-scalable=no, shrink-to-fit=no')
-    meta(http-equiv='x-ua-compatible', content='IE=edge, chrome=1')
-    meta(name='description', content='')
-    link(rel='preconnect', href='https://fonts.googleapis.com')
-    link(rel='preconnect', href='https://fonts.gstatic.com', crossorigin)
-    title Da'Jour Christophe
-    link(href='https://fonts.googleapis.com/css2?family=Meow+Script&display=swap', rel='stylesheet')
-    link(href='https://fonts.googleapis.com/css2?family=Meow+Script&family=Roboto:ital,wdth,wght@0,87.5,100..900;1,87.5,100..900&display=swap', rel='stylesheet')
-    link(href='https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Meow+Script&family=Roboto:ital,wdth,wght@0,87.5,100..900;1,87.5,100..900&display=swap', rel='stylesheet')
-    link(href='https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap', rel='stylesheet')
-    link(href='https://fonts.googleapis.com/css2?family=Cossette+Texte:wght@400;700&display=swap', rel='stylesheet')
-    link(rel='stylesheet', href=cssHref)
-    script.
-      void function() {
-        document.documentElement.className =
-        document.documentElement.className.replace('no-js', 'js');
-      }();
+  include partials/_head
   body
     .page
-      .splash
-        .signature(aria-hidden='true')
-          span.ink-clip#splash-signature-clip
-            span.ink#splash-signature-text Da'Jour J. Christophe
-        canvas.canvas#splash-canvas(aria-label="Da'Jour J. Christophe")
-      nav.navigation
-        ul.list
-          li.list-item
-            figure.fig
-              object.obj
-          li.list-item
-            ul.list
-              li.list-item
-                button.link#experience-cta Experience
-              li.list-item
-                button.link#services-cta Services
-              li.list-item
-                button.link#about-me-cta About Me
-              li.list-item
-                button.link#social-media-cta Social Media
-          //- li.list-item
-          //-   svg.brand-logo(xmlns='http://www.w3.org/2000/svg', viewBox='0 264 500 131', preserveAspectRatio='xMidYMax meet')
-          //-     path#curved(d='M 20,370 A 260,156 0 0,1 480,370', fill='none')
-          //-     text
-          //-       textPath(href='#curved', startOffset='50%') Da'Jour J. Christophe
-          li.list-item
-            button.link#work-with-me-cta
-              span Work With Me
-              figure.icon
-                svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 640 640')
-                  path(d='M598.6 342.6C611.1 330.1 611.1 309.8 598.6 297.3L470.6 169.3C458.1 156.8 437.8 156.8 425.3 169.3C412.8 181.8 412.8 202.1 425.3 214.6L498.7 288L64 288C46.3 288 32 302.3 32 320C32 337.7 46.3 352 64 352L498.7 352L425.3 425.4C412.8 437.9 412.8 458.2 425.3 470.7C437.8 483.2 458.1 483.2 470.6 470.7L598.6 342.7z')
+      include partials/_splash
+      include partials/_navigation
       .spacer
-      aside.left-menu
-        ul.list
-          li.list-item
-            span EST. 2015
-          li.list-item
-            hr
-          li.list-item
-            span ML/AI . SYSTEMS . PERFORMANCE
-      header.banner
-        h1.hero
-          span.left-text Da'Jour&nbsp;&nbsp;J.
-          br
-          span.right-text Christophe
-        ul.list
-          li.list-item
-            .left-panel
-              svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 640 640')
-                path(d='M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z')
-            .right-panel
-              h4 200
-              span Projects completed
-          li.list-item
-            hr
-          li.list-item
-            .left-panel
-              svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 640 640')
-                path(d='M352 128C352 110.3 337.7 96 320 96C302.3 96 288 110.3 288 128L288 288L128 288C110.3 288 96 302.3 96 320C96 337.7 110.3 352 128 352L288 352L288 512C288 529.7 302.3 544 320 544C337.7 544 352 529.7 352 512L352 352L512 352C529.7 352 544 337.7 544 320C544 302.3 529.7 288 512 288L352 288L352 128z')
-            .right-panel
-              h4 50
-              span Startups raised
-        h2.title
-          | AI Systems Engineer,
-          span.sub Alamogordo, NM
-        p.text
-          | I design and implement
-          strong  custom machine learning and systems infrastructure
-          |  in C++/Pythonâ€”from
-          strong  vector engines and schedulers
-          |  to production-ready intelligent systems.
-        button.link#open-cta
-          span See me in-action
-          figure.icon
-            svg(xmlns='http://www.w3.org/2000/svg', viewBox='0 0 640 640')
-              path(d='M598.6 342.6C611.1 330.1 611.1 309.8 598.6 297.3L470.6 169.3C458.1 156.8 437.8 156.8 425.3 169.3C412.8 181.8 412.8 202.1 425.3 214.6L498.7 288L64 288C46.3 288 32 302.3 32 320C32 337.7 46.3 352 64 352L498.7 352L425.3 425.4C412.8 437.9 412.8 458.2 425.3 470.7C437.8 483.2 458.1 483.2 470.6 470.7L598.6 342.7z')
-        label.label INTELLIGENCE
-      footer.footer
-        ul.legal-list
-          li.legal-item
-            button.legal-link#terms-cta Terms of Service
-          li.legal-item
-            button.legal-link#privacy-cta Privacy Policy
-      article.article#article
+      include partials/_left-menu
+      include partials/_banner
+      include partials/_footer
     script(src=jsHref)

@@ -1,14 +1,15 @@
 
 
+- Document
 
-- Responsive / Cross-Compatible
+- Unit test
 
-- Photographer (sat)
+- UAT (+security)
 
-- UAT
+- Hoist (Docker)
 
-- Logo
+- Host (AWS)
 
-- Hoist
+- DNS (GoDaddy, Namecheap)
 
-- Aria
+*Switch to Gulp

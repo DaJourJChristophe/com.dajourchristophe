@@ -8,4 +8,6 @@ assets/js/
 !assets/js/.keep
 dist/
 node_modules/
+/src/service/*.js
 tmp/
+/test/uat-*.png

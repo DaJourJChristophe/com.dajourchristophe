@@ -1,0 +1,123 @@
+.page .footer {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  grid-area: f;
+  padding: 0 7rem 0 3%;
+  z-index: 2000;
+}
+
+.footer .legal-list {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 1rem 0 0;
+  list-style-type: none;
+}
+
+.footer .legal-item {
+  display: flex;
+}
+
+.footer .legal-link {
+  padding: .95rem 1.55rem;
+  color: #555;
+  font-size: 1.18rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  letter-spacing: .04em;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+}
+
+.footer .legal-link:hover {
+  color: #fff;
+  cursor: pointer;
+  background-color: #111;
+  border-color: #111;
+}
+
+.footer .scroll-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: auto;
+  height: 80%;
+  margin: 0;
+  padding: 0;
+}
+
+.scroll-indicator .indicator-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  opacity: 0;
+  transform: translateY(0%);
+  animation: scroll-indicator-animation 4s cubic-bezier(.17,.67,.83,.67) .5s infinite forwards;
+}
+
+@keyframes scroll-indicator-animation {
+  0% {
+    opacity: 0;
+    color: #1b1c1a;
+    transform: translateY(27%);
+  }
+  50% {
+    opacity: 1;
+    color: #e3e5e3;
+    transform: translateY(57%);
+  }
+  50.5% {
+    opacity: 0;
+    color: #1b1c1a;
+  }
+  100% {
+    opacity: 0;
+    color: #1b1c1a;
+    transform: translateY(57%);
+  }
+}
+
+.scroll-indicator .indicator-icon {
+  display: block;
+  width: 100px;
+  height: 100%;
+  padding: 25px;
+  fill: currentColor;
+}
+
+.scroll-indicator .indicator-label {
+  margin-top: -12px;
+  color: currentColor;
+  font-size: .9rem;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+}
+
+.footer .label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  top: calc(20% - 20px);
+  right: 40px;
+  line-height: 1;
+  color: #111;
+  font-size: 90%;
+  font-family: 'Google Sans Code', monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.footer .label > svg {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  fill: #269b40;
+}

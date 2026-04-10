@@ -1,0 +1,192 @@
+.article .section.experience {
+  justify-content: center;
+  align-items: center;
+  padding: 1.6rem 1.2rem 1.2rem;
+  background: #d4d4d4;
+}
+
+.section.experience .button {
+  top: 7rem;
+  left: 4rem;
+  right: auto;
+  color: #666;
+  border-color: #8a8a8a;
+  background-color: rgba(255, 255, 255, 0.65);
+}
+
+.section.experience .panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 51.5% 48.5%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3.4rem;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.43), rgba(0, 0, 0, 0.39)),
+    url('../img/bikes.png');
+  background-position: center right;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: grayscale(100%);
+}
+
+.section.experience .copy {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 7.4rem 5.2rem 5rem 8.8rem;
+  background: transparent;
+  z-index: 2;
+}
+
+.section.experience .copy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  left: -2.8rem;
+  width: calc(100% + 26rem);
+  height: 100%;
+  background-color: #f5f3f2;
+  -webkit-mask: url('../img/background.svg') left top / 100% 100% no-repeat;
+  mask: url('../img/background.svg') left top / 100% 100% no-repeat;
+  z-index: -1;
+}
+
+.section.experience .copy::after {
+  content: '';
+  position: absolute;
+  top: 8rem;
+  bottom: 0;
+  left: 4.9rem;
+  width: 1px;
+  background: rgba(20, 20, 20, 0.06);
+}
+
+.section.experience .copy-inner {
+  position: relative;
+  max-width: 43rem;
+  z-index: 2;
+}
+
+.section.experience .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 2rem;
+  letter-spacing: .34em;
+  color: #858585;
+  font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+.section.experience .eyebrow .dot {
+  width: .55rem;
+  height: .55rem;
+  margin-right: 1.4rem;
+  background-color: #111;
+  border-radius: 50%;
+}
+
+.section.experience .hero {
+  margin: 0 0 2.1rem;
+  line-height: .86;
+  letter-spacing: -0.28rem;
+  color: #141414;
+  font-size: clamp(7.4rem, 7vw, 10.4rem);
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+.section.experience .subhero {
+  max-width: 40rem;
+  margin: 0 0 2.7rem;
+  line-height: 1.1;
+  color: #2f2f2f;
+  font-size: clamp(2.3rem, 2vw, 3.05rem);
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+}
+
+.section.experience .text {
+  max-width: 40rem;
+  margin: 0 0 1.6rem;
+  line-height: 1.72;
+  color: #4d4d4d;
+  font-size: 1.52rem;
+  font-family: 'Roboto', sans-serif;
+  text-align: left;
+}
+
+.section.experience .cta {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1.4rem;
+  padding: 1.35rem 3rem;
+  color: #212121;
+  font-size: 1.55rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  border: 1px solid rgba(0, 0, 0, 0.32);
+  border-radius: 999px;
+  text-decoration: none;
+}
+
+.section.experience .cta:hover {
+  color: #fff;
+  background-color: #111;
+}
+
+.section.experience .cta svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: 1.4rem;
+  fill: currentColor;
+}
+
+.section.experience .watermark {
+  position: absolute;
+  left: -9.8rem;
+  bottom: 9.8rem;
+  opacity: .022;
+  letter-spacing: .08em;
+  color: #111;
+  font-size: 10rem;
+  font-family: 'Instrument Serif', serif;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.section.experience .visual::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.16)),
+    radial-gradient(circle at 88% 16%, rgba(255, 255, 255, 0.08), transparent 26%);
+}
+
+.section.experience .meta {
+  position: absolute;
+  right: 6.6rem;
+  bottom: 6.6rem;
+  z-index: 2;
+  padding-left: 2.2rem;
+  letter-spacing: .24em;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.08rem;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+}
+
+.section.experience .meta::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 2.8rem;
+  background: rgba(255, 255, 255, 0.72);
+  transform: translateY(-50%);
+}

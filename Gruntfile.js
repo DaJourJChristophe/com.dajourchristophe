@@ -4,12 +4,29 @@ module.exports = function (grunt) {
   const { execFileSync } = require('node:child_process');
   const fs = require('node:fs');
   const path = require('node:path');
+  const esbuild = require('esbuild');
   const pug = require('pug');
   const sass = require('sass');
   const cssSourcePath = path.join(__dirname, 'assets', 'scss', 'index.scss');
   const cssOutputPath = path.join(__dirname, 'assets', 'css', 'index.css');
   const cssMapPath = path.join(__dirname, 'assets', 'css', 'index.css.map');
+  const playwrightUatPath = path.join(__dirname, 'test', 'uat-cross-browser.js');
   const tscPath = path.join(__dirname, 'node_modules', 'typescript', 'bin', 'tsc');
+
+  function cleanClientBuildArtifacts() {
+    const clientOutputPath = path.join(__dirname, 'assets', 'js');
+
+    if (!fs.existsSync(clientOutputPath)) {
+      fs.mkdirSync(clientOutputPath, { recursive: true });
+      return;
+    }
+
+    fs.readdirSync(clientOutputPath).forEach((entry) => {
+      if (/\.js(\.map)?$/.test(entry)) {
+        fs.unlinkSync(path.join(clientOutputPath, entry));
+      }
+    });
+  }
 
   grunt.initConfig({
     cssmin: {
@@ -78,27 +95,69 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('typescript:dev', 'Build the frontend TypeScript bundle with source maps.', function () {
-    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.json', '--sourceMap', 'true'], {
+    cleanClientBuildArtifacts();
+    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.json', '--noEmit', 'true'], {
       cwd: __dirname,
       stdio: 'inherit'
+    });
+    esbuild.buildSync({
+      bundle: true,
+      entryPoints: [path.join(__dirname, 'src', 'client', 'index.ts')],
+      format: 'iife',
+      outfile: path.join(__dirname, 'assets', 'js', 'index.js'),
+      platform: 'browser',
+      sourcemap: true,
+      target: 'es2022'
     });
   });
 
   grunt.registerTask('typescript:prod', 'Build the frontend TypeScript bundle without source maps.', function () {
-    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.json', '--sourceMap', 'false'], {
+    cleanClientBuildArtifacts();
+    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.json', '--noEmit', 'true'], {
+      cwd: __dirname,
+      stdio: 'inherit'
+    });
+    esbuild.buildSync({
+      bundle: true,
+      entryPoints: [path.join(__dirname, 'src', 'client', 'index.ts')],
+      format: 'iife',
+      outfile: path.join(__dirname, 'assets', 'js', 'index.js'),
+      platform: 'browser',
+      sourcemap: false,
+      target: 'es2022'
+    });
+  });
+
+  grunt.registerTask('service:dev', 'Build the backend TypeScript service with source maps.', function () {
+    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.server.json', '--sourceMap', 'true'], {
+      cwd: __dirname,
+      stdio: 'inherit'
+    });
+  });
+
+  grunt.registerTask('service:prod', 'Build the backend TypeScript service without source maps.', function () {
+    execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.server.json', '--sourceMap', 'false'], {
       cwd: __dirname,
       stdio: 'inherit'
     });
 
-    const jsMapPath = path.join(__dirname, 'assets', 'js', 'index.js.map');
+    const serverMapPath = path.join(__dirname, 'src', 'service', 'index.js.map');
 
-    if (fs.existsSync(jsMapPath)) {
-      fs.unlinkSync(jsMapPath);
+    if (fs.existsSync(serverMapPath)) {
+      fs.unlinkSync(serverMapPath);
     }
   });
 
-  grunt.registerTask('dev', ['styles:dev', 'typescript:dev', 'html:dev']);
-  grunt.registerTask('prod', ['styles:prod', 'typescript:prod', 'cssmin:prod', 'uglify:prod', 'html:prod']);
+  grunt.registerTask('server:dev', ['service:dev']);
+  grunt.registerTask('server:prod', ['service:prod']);
+  grunt.registerTask('uat', 'Run cross-browser UAT checks.', function () {
+    execFileSync(process.execPath, [playwrightUatPath], {
+      cwd: __dirname,
+      stdio: 'inherit'
+    });
+  });
+  grunt.registerTask('dev', ['styles:dev', 'typescript:dev', 'service:dev', 'html:dev']);
+  grunt.registerTask('prod', ['styles:prod', 'typescript:prod', 'service:prod', 'cssmin:prod', 'uglify:prod', 'html:prod']);
   grunt.registerTask('build', ['dev']);
   grunt.registerTask('default', ['dev']);
 };

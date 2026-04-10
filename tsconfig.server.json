@@ -2,12 +2,12 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "CommonJS",
-    "rootDir": "src/client",
-    "outDir": "assets/js",
+    "rootDir": "src/service",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
-  "include": ["src/client/**/*.ts"]
+  "include": ["src/service/**/*.ts"]
 }

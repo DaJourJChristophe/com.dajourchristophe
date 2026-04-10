@@ -2,7 +2,7 @@
   "name": "com.dajour",
   "version": "1.0.0",
   "description": "",
-  "main": "assets/js/index.js",
+  "main": "src/service/index.js",
   "directories": {
     "doc": "docs"
   },
@@ -10,19 +10,30 @@
     "build": "node -e \"require('grunt').tasks(['build'])\"",
     "build:dev": "node -e \"require('grunt').tasks(['dev'])\"",
     "build:prod": "node -e \"require('grunt').tasks(['prod'])\"",
-    "start": "node assets/js/index.js",
-    "test": "npm run build && npm run start"
+    "build:server": "node -e \"require('grunt').tasks(['service:dev'])\"",
+    "build:service": "node -e \"require('grunt').tasks(['service:dev'])\"",
+    "start": "node src/service/index.js",
+    "serve": "npm run build:dev && npm run start",
+    "test": "npm run build && npm run start",
+    "uat": "node -e \"require('grunt').tasks(['uat'])\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "esbuild": "^0.28.0",
     "grunt": "^1.6.1",
     "grunt-contrib-cssmin": "^5.0.0",
     "grunt-contrib-uglify": "^5.2.2",
     "pug": "^3.0.4",
     "sass": "^1.99.0",
     "typescript": "^6.0.2"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
   }
 }
