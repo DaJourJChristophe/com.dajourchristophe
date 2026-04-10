@@ -3,7 +3,9 @@
 *.map
 
 assets/css/
+!assets/css/.keep
 assets/js/
+!assets/js/.keep
 dist/
 node_modules/
 tmp/
