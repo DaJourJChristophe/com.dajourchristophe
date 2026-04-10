@@ -13,6 +13,11 @@ module.exports = function (grunt) {
   const playwrightUatPath = path.join(__dirname, 'test', 'uat-cross-browser.js');
   const tscPath = path.join(__dirname, 'node_modules', 'typescript', 'bin', 'tsc');
 
+  /**
+   * Removes previous generated client JavaScript before bundling.
+   *
+   * @returns {void}
+   */
   function cleanClientBuildArtifacts() {
     const clientOutputPath = path.join(__dirname, 'assets', 'js');
 
@@ -48,6 +53,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
+  /**
+   * Renders the Jade entrypoint into the generated HTML file.
+   *
+   * @param {string} cssHref - Stylesheet href to inject into the template.
+   * @param {string} jsHref - Script href to inject into the template.
+   * @returns {void}
+   */
   function buildHtml(cssHref, jsHref) {
     const sourcePath = path.join(__dirname, 'template', 'index.jade');
     const outputPath = path.join(__dirname, 'template', 'index.html');

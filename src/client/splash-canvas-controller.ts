@@ -1,10 +1,13 @@
 import type { AppEvent, AppEventReceiver, NullableElement, SplashLayout } from './types';
 
+/**
+ * Controls the splash signature animation.
+ */
 export class SplashCanvasController implements AppEventReceiver {
   private readonly canvas: HTMLCanvasElement | null;
   private readonly clip: HTMLElement | null;
 
-private readonly text: HTMLElement | null;
+  private readonly text: HTMLElement | null;
   private readonly context: CanvasRenderingContext2D | null;
   private currentProgress = 0;
   private startTime = 0;
@@ -24,6 +27,11 @@ private readonly text: HTMLElement | null;
     this.textStyle = this.text ? this.text.style as CSSStyleDeclaration & { webkitClipPath: string } : null;
   }
 
+  /**
+   * Starts the animation after required font resources are ready or a short fallback delay passes.
+   *
+   * @returns Nothing.
+   */
   public start(): void {
     if (!this.canvas || !this.clip || !this.text || !this.context || this.started) {
       return;
@@ -53,6 +61,11 @@ private readonly text: HTMLElement | null;
     }
   }
 
+  /**
+   * Stops the animation and cancels all pending frame/timer work.
+   *
+   * @returns Nothing.
+   */
   public stop(): void {
     this.started = false;
     this.startTime = 0;
@@ -68,12 +81,24 @@ private readonly text: HTMLElement | null;
     }
   }
 
+  /**
+   * Responds to context-dispatched events used by the splash controller.
+   *
+   * @param appEvent - Captured application event.
+   * @returns Nothing.
+   */
   public handleEvent(appEvent: AppEvent): void {
     if (appEvent.type === 'resize') {
       this.resize();
     }
   }
 
+  /**
+   * Advances the signature animation on each animation frame.
+   *
+   * @param timestamp - Animation timestamp supplied by the browser.
+   * @returns Nothing.
+   */
   private readonly animate = (timestamp: number): void => {
     if (!this.started) {
       return;
@@ -106,10 +131,21 @@ private readonly text: HTMLElement | null;
     }
   };
 
+  /**
+   * Applies cubic easing to the signature progress.
+   *
+   * @param progress - Linear progress from `0` to `1`.
+   * @returns Eased progress from `0` to `1`.
+   */
   private ease(progress: number): number {
     return 1 - Math.pow(1 - progress, 3);
   }
 
+  /**
+   * Recomputes canvas dimensions and signature layout geometry.
+   *
+   * @returns Nothing.
+   */
   private resize(): void {
     if (!this.canvas || !this.clip || !this.text) {
       return;
@@ -143,6 +179,12 @@ private readonly text: HTMLElement | null;
     this.draw(this.currentProgress);
   }
 
+  /**
+   * Draws the moving pen cue and updates signature text clipping.
+   *
+   * @param progress - Current animation progress from `0` to `1`.
+   * @returns Nothing.
+   */
   private draw(progress: number): void {
     if (!this.layout || !this.canvas || !this.clip || !this.textStyle || !this.context) {
       return;

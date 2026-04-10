@@ -1,6 +1,12 @@
 import express from 'express';
 import path from 'node:path';
 
+/**
+ * Creates the Express application used by the local loopback service.
+ *
+ * @param rootPath - Absolute project root path used to resolve static assets and the generated HTML template.
+ * @returns Configured Express application instance.
+ */
 export function createApp(rootPath: string): express.Express {
   const app = express();
 

@@ -1,5 +1,14 @@
 import type { AppElements, Cleanup, NullableElement } from './types';
 
+/**
+ * Registers a DOM event listener and returns a cleanup callback for it.
+ *
+ * @typeParam TEvent - Native event type expected by the listener.
+ * @param target - Event target to attach to.
+ * @param type - Browser event name.
+ * @param listener - Strongly typed event callback.
+ * @returns Cleanup callback that removes the listener.
+ */
 export function addListener<TEvent extends Event>(
   target: EventTarget,
   type: string,
@@ -14,6 +23,12 @@ export function addListener<TEvent extends Event>(
   };
 }
 
+/**
+ * Composes multiple teardown callbacks into one reverse-order cleanup.
+ *
+ * @param cleanups - Cleanup callbacks to run when tearing down a state.
+ * @returns Cleanup callback that invokes each provided cleanup in reverse order.
+ */
 export function composeCleanups(...cleanups: Cleanup[]): Cleanup {
   return function cleanup(): void {
     cleanups.slice().reverse().forEach((teardown) => {
@@ -22,6 +37,11 @@ export function composeCleanups(...cleanups: Cleanup[]): Cleanup {
   };
 }
 
+/**
+ * Resolves all static DOM elements required by the client shell.
+ *
+ * @returns Resolved element bag when the shell exists; otherwise `null`.
+ */
 export function resolveElements(): AppElements | null {
   const articleTarget = document.getElementById('article') as NullableElement<HTMLElement>;
   const openCtaButton = document.getElementById('open-cta') as NullableElement<HTMLButtonElement>;
@@ -61,14 +81,33 @@ export function resolveElements(): AppElements | null {
   };
 }
 
+/**
+ * Narrows an event target to a DOM `Element`.
+ *
+ * @param target - Event target to inspect.
+ * @returns `true` when the target is an `Element`.
+ */
 export function isElementTarget(target: EventTarget | null): target is Element {
   return target instanceof Element;
 }
 
+/**
+ * Narrows an event target to a DOM `Node`.
+ *
+ * @param target - Event target to inspect.
+ * @returns `true` when the target is a `Node`.
+ */
 export function isNodeTarget(target: EventTarget | null): target is Node {
   return target instanceof Node;
 }
 
+/**
+ * Checks whether an event target is contained within an element.
+ *
+ * @param target - Event target to test.
+ * @param element - Potential ancestor element.
+ * @returns `true` when `target` is a node inside `element`.
+ */
 export function hitsElement(target: EventTarget | null, element: Element): boolean {
   return isNodeTarget(target) && element.contains(target);
 }

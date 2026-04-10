@@ -79,6 +79,11 @@ const states = [
   }
 ];
 
+/**
+ * Removes screenshots from a previous UAT run so each run produces a clean set.
+ *
+ * @returns {void}
+ */
 function cleanPreviousScreenshots() {
   const testPath = path.join(__dirname);
 
@@ -89,6 +94,11 @@ function cleanPreviousScreenshots() {
   }
 }
 
+/**
+ * Waits for the loopback service to respond before launching browser checks.
+ *
+ * @returns {Promise<void>} Resolves when the service responds successfully.
+ */
 function waitForServer() {
   return new Promise((resolve, reject) => {
     const deadline = Date.now() + 10000;
@@ -117,6 +127,12 @@ function waitForServer() {
   });
 }
 
+/**
+ * Builds a cache-busting URL for a specific UAT state.
+ *
+ * @param {string} stateName - State name being opened.
+ * @returns {string} Absolute URL for the UAT page load.
+ */
 function makeUatUrl(stateName) {
   const url = new URL(baseUrl);
 
@@ -125,6 +141,15 @@ function makeUatUrl(stateName) {
   return url.toString();
 }
 
+/**
+ * Compares layout metrics from a candidate browser against the reference browser.
+ *
+ * @param {Record<string, number>} reference - Reference metric map from Chromium.
+ * @param {Record<string, number>} candidate - Candidate metric map from the current browser.
+ * @param {string} browserName - Browser currently under test.
+ * @param {string} stateName - UI state currently under test.
+ * @returns {void}
+ */
 function compareMetric(reference, candidate, browserName, stateName) {
   for (const [key, referenceValue] of Object.entries(reference)) {
     const candidateValue = candidate[key];
@@ -138,6 +163,13 @@ function compareMetric(reference, candidate, browserName, stateName) {
   }
 }
 
+/**
+ * Opens one application state in the provided Playwright page.
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page under test.
+ * @param {{name: string, readySelector: string, triggerSelector?: string, expectedText?: string, setup?: Function}} state - State configuration to open.
+ * @returns {Promise<void>} Resolves after the state is visible and settled.
+ */
 async function openState(page, state) {
   if (state.setup) {
     await state.setup(page);
@@ -155,6 +187,13 @@ async function openState(page, state) {
   }
 }
 
+/**
+ * Collects stable layout metrics for cross-browser comparison.
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page under test.
+ * @param {{readySelector: string}} state - State configuration being measured.
+ * @returns {Promise<Record<string, number>>} Layout metrics for the active state.
+ */
 async function collectMetrics(page, state) {
   return page.evaluate((readySelector) => {
     const readRect = (selector) => {
@@ -188,6 +227,14 @@ async function collectMetrics(page, state) {
   }, state.readySelector);
 }
 
+/**
+ * Validates responsive constraints for an opened UI state.
+ *
+ * @param {import('@playwright/test').Page} page - Playwright page under test.
+ * @param {{name: string, readySelector: string}} state - State configuration being checked.
+ * @param {string} viewportName - Human-readable viewport label.
+ * @returns {Promise<void>} Resolves when the responsive layout passes.
+ */
 async function assertResponsiveLayout(page, state, viewportName) {
   const metrics = await page.evaluate((readySelector) => {
     const readyElement = document.querySelector(readySelector);

@@ -1,18 +1,37 @@
 import type { AppElements, AppEvent, ArticleView } from './types';
 import { hitsElement, isElementTarget } from './dom';
 
+/**
+ * Owns article rendering and high-level click routing for the static page shell.
+ */
 export class PageController {
   private readonly elements: AppElements;
 
-constructor(elements: AppElements) {
+  /**
+   * Creates a controller for the resolved page shell.
+   *
+   * @param elements - Required DOM handles for the page shell.
+   */
+  constructor(elements: AppElements) {
     this.elements = elements;
   }
 
+  /**
+   * Closes the article panel and clears active navigation state.
+   *
+   * @returns Nothing.
+   */
   public closeArticle(): void {
     this.clearActiveButtons();
     this.elements.articleTarget.classList.remove('open');
   }
 
+  /**
+   * Renders and opens one article panel.
+   *
+   * @param view - Article view to render.
+   * @returns Nothing.
+   */
   public openArticle(view: ArticleView): void {
     this.renderView(view);
     this.clearActiveButtons();
@@ -26,6 +45,13 @@ constructor(elements: AppElements) {
     this.elements.articleTarget.classList.add('open');
   }
 
+  /**
+   * Routes landing/nav click events to state-transition handlers.
+   *
+   * @param appEvent - Context-dispatched click event.
+   * @param handlers - Callback map used to request article transitions.
+   * @returns Nothing.
+   */
   public handleLandingEvent(
     appEvent: AppEvent,
     handlers: {
@@ -84,6 +110,13 @@ constructor(elements: AppElements) {
     }
   }
 
+  /**
+   * Handles click behavior inside rendered article panels.
+   *
+   * @param appEvent - Context-dispatched click event.
+   * @param onClose - Callback invoked when a panel close control is activated.
+   * @returns Nothing.
+   */
   public handleArticleEvent(appEvent: AppEvent, onClose: () => void): void {
     if (appEvent.type !== 'click' || !isElementTarget(appEvent.target)) {
       return;
@@ -111,6 +144,11 @@ constructor(elements: AppElements) {
     }
   }
 
+  /**
+   * Removes active styling from all navigation buttons.
+   *
+   * @returns Nothing.
+   */
   private clearActiveButtons(): void {
     this.elements.navigationButtons.forEach((button) => {
       const parent = button.parentElement;
@@ -121,6 +159,12 @@ constructor(elements: AppElements) {
     });
   }
 
+  /**
+   * Resolves the navigation button associated with an article view.
+   *
+   * @param view - Article view to map to navigation.
+   * @returns Matching navigation button when one exists; otherwise `null`.
+   */
   private getActiveButton(view: ArticleView): HTMLButtonElement | null {
     switch (view) {
       case 'about-me':
@@ -136,6 +180,12 @@ constructor(elements: AppElements) {
     }
   }
 
+  /**
+   * Dispatches a view name to its specific render function.
+   *
+   * @param view - Article view to render.
+   * @returns Nothing.
+   */
   private renderView(view: ArticleView): void {
     switch (view) {
       case 'about-me':
@@ -162,6 +212,11 @@ constructor(elements: AppElements) {
     }
   }
 
+  /**
+   * Renders the contact article markup.
+   *
+   * @returns Nothing.
+   */
   private renderContactSection(): void {
     this.elements.articleTarget.innerHTML = `
 <section class="section contact" role="dialog" aria-modal="true" aria-labelledby="contact-title">
@@ -239,6 +294,11 @@ constructor(elements: AppElements) {
 `;
   }
 
+  /**
+   * Renders the about-me article markup.
+   *
+   * @returns Nothing.
+   */
   private renderAboutMeSection(): void {
     this.elements.articleTarget.innerHTML = `
 <section class="section about-me" role="dialog" aria-modal="true" aria-labelledby="about-title">
@@ -276,6 +336,11 @@ constructor(elements: AppElements) {
 `;
   }
 
+  /**
+   * Renders the services article markup.
+   *
+   * @returns Nothing.
+   */
   private renderServicesSection(): void {
     this.elements.articleTarget.innerHTML = `
 <section class="section services" role="dialog" aria-modal="true" aria-labelledby="services-title">
@@ -363,6 +428,11 @@ constructor(elements: AppElements) {
 `;
   }
 
+  /**
+   * Renders the social-media article markup.
+   *
+   * @returns Nothing.
+   */
   private renderSocialMediaSection(): void {
     this.elements.articleTarget.innerHTML = `
 <section class="section social-media" role="dialog" aria-modal="true" aria-labelledby="social-title">
@@ -385,6 +455,11 @@ constructor(elements: AppElements) {
 `;
   }
 
+  /**
+   * Renders the project spotlight/experience article markup.
+   *
+   * @returns Nothing.
+   */
   private renderExperienceSection(): void {
     this.elements.articleTarget.innerHTML = `
 <section class="section experience" role="dialog" aria-modal="true" aria-labelledby="experience-title">
@@ -411,6 +486,12 @@ constructor(elements: AppElements) {
 `;
   }
 
+  /**
+   * Renders a legal article panel.
+   *
+   * @param kind - Legal document to render.
+   * @returns Nothing.
+   */
   private renderLegalSection(kind: 'terms' | 'privacy'): void {
     const isTerms = kind === 'terms';
     const title = isTerms ? 'Terms of Service' : 'Privacy Policy';

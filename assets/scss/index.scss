@@ -1,5 +1,7 @@
 @charset "UTF-8";
 
+// Main SCSS module map. Each partial owns one feature/layout area
+// and compiles into assets/css/index.css.
 @use "partials/foundation";
 @use "partials/base";
 @use "partials/splash";

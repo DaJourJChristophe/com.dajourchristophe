@@ -4,9 +4,18 @@ import { GuardController } from './guard-controller';
 import { PageController } from './page-controller';
 import { SplashCanvasController } from './splash-canvas-controller';
 
+/**
+ * Resolved static shell elements required for the full interactive app.
+ */
 const elements = resolveElements();
 
 if (!elements) {
+  /**
+   * Minimal fallback path used when the full page shell is unavailable.
+   *
+   * This keeps interaction guards and the splash animation alive without
+   * attempting to boot the full state machine.
+   */
   const guard = new GuardController();
 
   composeCleanups(
@@ -28,6 +37,9 @@ if (!elements) {
     splashCanvas.handleEvent({ event, target: event.target, type: 'resize' });
   });
 } else {
+  /**
+   * Full application boot path for the generated portfolio shell.
+   */
   const controller = new PageController(elements);
   const app = new AppContext(controller);
 

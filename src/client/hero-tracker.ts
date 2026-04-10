@@ -1,10 +1,13 @@
 import type { AppEvent, AppEventReceiver, NullableElement, Point } from './types';
 
+/**
+ * Coordinates cursor-driven parallax values for the landing and about panels.
+ */
 export class HeroTracker implements AppEventReceiver {
   private readonly article: HTMLElement | null;
   private readonly banner: HTMLElement | null;
 
-private readonly hero: HTMLElement | null;
+  private readonly hero: HTMLElement | null;
   private readonly heroMaxX = 10;
   private readonly heroMaxY = 6;
   private readonly titleMaxX = 5;
@@ -57,10 +60,20 @@ private readonly hero: HTMLElement | null;
     this.hero = document.querySelector('.banner .hero') as NullableElement<HTMLElement>;
   }
 
+  /**
+   * Activates cursor tracking.
+   *
+   * @returns Nothing.
+   */
   public start(): void {
     this.active = true;
   }
 
+  /**
+   * Deactivates cursor tracking and resets visual offsets.
+   *
+   * @returns Nothing.
+   */
   public stop(): void {
     this.active = false;
     this.target.x = 0;
@@ -76,6 +89,12 @@ private readonly hero: HTMLElement | null;
     this.render();
   }
 
+  /**
+   * Handles pointer, focus, and keyboard events from the central context.
+   *
+   * @param appEvent - Context-dispatched event.
+   * @returns Nothing.
+   */
   public handleEvent(appEvent: AppEvent): void {
     if (!this.active || !this.article || !this.banner || !this.hero) {
       return;
@@ -106,6 +125,12 @@ private readonly hero: HTMLElement | null;
     }
   }
 
+  /**
+   * Eases the current visual position toward the latest target vector.
+   *
+   * @param timestamp - Animation timestamp supplied by the browser.
+   * @returns Nothing.
+   */
   private readonly animate = (timestamp: number): void => {
     if (!this.article || !this.banner || !this.hero) {
       this.frame = 0;
@@ -140,16 +165,33 @@ private readonly hero: HTMLElement | null;
     }
   };
 
+  /**
+   * Requests an animation frame if none is currently pending.
+   *
+   * @returns Nothing.
+   */
   private requestAnimation(): void {
     if (!this.frame) {
       this.frame = window.requestAnimationFrame(this.animate);
     }
   }
 
+  /**
+   * Checks whether the current event target should suspend cursor tracking.
+   *
+   * @param targetNode - Event target to inspect.
+   * @returns `true` when cursor tracking should pause.
+   */
   private shouldSuspend(targetNode: EventTarget | null): boolean {
     return !!(targetNode instanceof Element && targetNode.closest(this.suspendSelector));
   }
 
+  /**
+   * Converts pointer coordinates into normalized tracking targets.
+   *
+   * @param event - Pointer event with viewport coordinates.
+   * @returns Nothing.
+   */
   private updateFromPointer(event: PointerEvent): void {
     if (this.shouldSuspend(event.target)) {
       this.suspended = true;
@@ -165,6 +207,11 @@ private readonly hero: HTMLElement | null;
     this.requestAnimation();
   }
 
+  /**
+   * Marks the pointer as inactive so tracked elements ease back to origin.
+   *
+   * @returns Nothing.
+   */
   private reset(): void {
     if (this.suspended) {
       this.easeBackToOrigin();
@@ -176,11 +223,22 @@ private readonly hero: HTMLElement | null;
     this.requestAnimation();
   }
 
+  /**
+   * Suspends tracking immediately while preserving eased return motion.
+   *
+   * @returns Nothing.
+   */
   private suspend(): void {
     this.suspended = true;
     this.easeBackToOrigin();
   }
 
+  /**
+   * Resumes tracking when the pointer leaves a suspended region.
+   *
+   * @param event - Pointer event that may reactivate tracking.
+   * @returns Nothing.
+   */
   private resumeFromPointer(event: PointerEvent): void {
     const relatedTarget = event.relatedTarget;
 
@@ -192,6 +250,11 @@ private readonly hero: HTMLElement | null;
     this.updateFromPointer(event);
   }
 
+  /**
+   * Sets the tracking target to the design origin.
+   *
+   * @returns Nothing.
+   */
   private easeBackToOrigin(): void {
     this.target.x = 0;
     this.target.y = 0;
@@ -200,6 +263,11 @@ private readonly hero: HTMLElement | null;
     this.requestAnimation();
   }
 
+  /**
+   * Writes current tracking values into CSS custom properties.
+   *
+   * @returns Nothing.
+   */
   private render(): void {
     if (!this.article || !this.banner || !this.hero) {
       return;
