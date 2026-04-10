@@ -1,5 +1,4 @@
 
-- Unit test
 
 - UAT (+security)
 
@@ -9,4 +8,4 @@
 
 - DNS (GoDaddy, Namecheap)
 
-*Switch to Gulp
+- SSL
