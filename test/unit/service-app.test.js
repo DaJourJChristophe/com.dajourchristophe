@@ -165,3 +165,19 @@ test('service app serves a health check endpoint', async () => {
     await server.close();
   }
 });
+
+test('service app exposes a Sentry debug route and returns the event id on error', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath);
+  const server = await listen(app);
+
+  try {
+    const response = await fetch(`${server.baseUrl}/debug-sentry`);
+    const body = await response.text();
+
+    assert.equal(response.status, 500);
+    assert.match(body.trim(), /.+/);
+  } finally {
+    await server.close();
+  }
+});

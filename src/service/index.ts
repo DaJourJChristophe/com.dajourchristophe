@@ -1,3 +1,4 @@
+import './instrument';
 import path from 'node:path';
 import { createApp } from './app';
 

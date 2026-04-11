@@ -1,0 +1,40 @@
+name: Validate Changes
+
+on:
+  push:
+    branches:
+      - dev
+  pull_request:
+    branches:
+      - stage
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-changes-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Validate proposed changes
+        run: npm run ci

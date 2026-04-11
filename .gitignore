@@ -1,3 +1,7 @@
+*.crt
+*.exe
+*.key
+
 formulas.txt
 fractal.cc
 
