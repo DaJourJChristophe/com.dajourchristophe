@@ -15,7 +15,7 @@ Optional overrides:
 ```bash
 REPO_URL=https://github.com/DaJourJChristophe/com.dajourchristophe.git \
 REPO_DIR=$HOME/com.dajourchristophe \
-BRANCH=main \
+TARGET_REF=main \
 bash scripts/deploy-aws-instance.sh
 ```
 
@@ -25,3 +25,17 @@ The deploy flow will:
 2. clone or update the repository
 3. install Docker and Docker Compose on Debian
 4. deploy the production stack with `nginx` in front of the app
+
+## Version bump helpers
+
+Minor release bump:
+
+```bash
+node scripts/bump-version.mjs minor
+```
+
+Major release bump:
+
+```bash
+node scripts/bump-version.mjs major
+```

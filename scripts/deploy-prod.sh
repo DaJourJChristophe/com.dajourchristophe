@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_PATH="${1:-$HOME/com.dajourchristophe}"
-BRANCH="${2:-main}"
+TARGET_REF="${2:-main}"
 DOCKER_COMPOSE_PREFIX=(docker compose)
 
 if [ ! -d "$REPO_PATH/.git" ]; then
@@ -18,9 +18,14 @@ if ! docker info >/dev/null 2>&1; then
   DOCKER_COMPOSE_PREFIX=(sudo docker compose)
 fi
 
-git fetch origin
-git checkout "$BRANCH"
-git pull --ff-only origin "$BRANCH"
+git fetch origin --tags
+git checkout "$TARGET_REF"
+
+if git show-ref --verify --quiet "refs/remotes/origin/$TARGET_REF"; then
+  git pull --ff-only origin "$TARGET_REF"
+else
+  echo "Deploying pinned ref $TARGET_REF"
+fi
 
 "${DOCKER_COMPOSE_PREFIX[@]}" -f infra/docker/docker-compose.prod.yml up --build -d
 "${DOCKER_COMPOSE_PREFIX[@]}" -f infra/docker/docker-compose.prod.yml ps

@@ -1,0 +1,40 @@
+name: Deploy Production
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy tagged release to AWS
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USER }}
+          key: ${{ secrets.AWS_EC2_SSH_KEY }}
+          port: ${{ secrets.AWS_EC2_PORT || 22 }}
+          script: |
+            export REPO_URL="https://github.com/DaJourJChristophe/com.dajourchristophe.git"
+            export REPO_DIR="$HOME/com.dajourchristophe"
+            export TARGET_REF="${{ github.ref_name }}"
+
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              sudo apt-get update
+              sudo apt-get install -y git
+              git clone "$REPO_URL" "$REPO_DIR"
+            fi
+
+            cd "$REPO_DIR"
+            git fetch origin --tags
+            bash scripts/deploy-aws-instance.sh

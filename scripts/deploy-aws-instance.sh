@@ -3,7 +3,7 @@ set -euo pipefail
 
 REPO_URL="${REPO_URL:-https://github.com/DaJourJChristophe/com.dajourchristophe.git}"
 REPO_DIR="${REPO_DIR:-$HOME/com.dajourchristophe}"
-BRANCH="${BRANCH:-main}"
+TARGET_REF="${TARGET_REF:-main}"
 
 echo "[deploy] starting deployment on $(hostname)"
 
@@ -22,15 +22,20 @@ fi
 
 cd "$REPO_DIR"
 
-echo "[deploy] syncing branch $BRANCH"
-git fetch origin
-git checkout "$BRANCH"
-git pull --ff-only origin "$BRANCH"
+echo "[deploy] syncing ref $TARGET_REF"
+git fetch origin --tags
+git checkout "$TARGET_REF"
+
+if git show-ref --verify --quiet "refs/remotes/origin/$TARGET_REF"; then
+  git pull --ff-only origin "$TARGET_REF"
+else
+  echo "[deploy] using pinned ref $TARGET_REF"
+fi
 
 echo "[deploy] ensuring Docker is installed"
 bash scripts/install-docker-debian.sh
 
 echo "[deploy] launching production stack"
-bash scripts/deploy-prod.sh "$REPO_DIR" "$BRANCH"
+bash scripts/deploy-prod.sh "$REPO_DIR" "$TARGET_REF"
 
 echo "[deploy] done"

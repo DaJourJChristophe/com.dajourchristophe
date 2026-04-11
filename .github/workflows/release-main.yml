@@ -1,0 +1,55 @@
+name: Release Main
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-main
+  cancel-in-progress: false
+
+jobs:
+  release-minor:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release): minor ') }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Validate release candidate
+        run: npm run ci
+
+      - name: Configure Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump minor version
+        run: node scripts/bump-version.mjs minor
+
+      - name: Commit and tag release
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          git add package.json package-lock.json
+          git commit -m "chore(release): minor v$VERSION"
+          git tag "v$VERSION"
+          git push origin HEAD:main --follow-tags
