@@ -46,7 +46,6 @@ jobs:
             echo "PROMOTION_PAT secret is required so GitHub Actions can create stage-to-main pull requests."
             exit 1
           fi
-
           git fetch origin main stage
 
           if git diff --quiet origin/main...origin/stage; then
