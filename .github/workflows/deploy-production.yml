@@ -23,7 +23,6 @@ jobs:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
-          port: ${{ secrets.AWS_EC2_PORT || 22 }}
           script: |
             export REPO_URL="https://github.com/DaJourJChristophe/com.dajourchristophe.git"
             export REPO_DIR="$HOME/com.dajourchristophe"

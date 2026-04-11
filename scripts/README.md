@@ -96,3 +96,16 @@ That will:
 4. block force-pushes and branch deletions on both branches
 
 The protection intentionally requires pull requests, not human approvals, so the automated `stage -> main` promotion can still auto-merge after CI passes.
+
+## Required GitHub secrets
+
+For the CI/CD workflows to run end to end, configure these repository secrets:
+
+- `PROMOTION_PAT`
+  - PAT with permission to create and merge `stage -> main` pull requests
+- `RELEASE_PAT`
+  - PAT with permission to push release commits and tags from `main`
+- `AWS_EC2_HOST`
+- `AWS_EC2_USER`
+- `AWS_EC2_SSH_KEY`
+- optional: `AWS_EC2_PORT`
