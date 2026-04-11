@@ -40,6 +40,32 @@ The deploy flow will:
 3. install Docker and Docker Compose on Debian
 4. deploy the production stack with `nginx` in front of the app
 
+## Production env vars
+
+Production secrets should stay out of git.
+
+Create either:
+
+```bash
+.env.prod
+```
+
+or:
+
+```bash
+infra/docker/.env.prod
+```
+
+with values like:
+
+```bash
+SENTRY_DSN=your-sentry-dsn
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=
+```
+
+`scripts/deploy-prod.sh` will load that file before starting the production stack.
+
 ## Version bump helpers
 
 Minor release bump:

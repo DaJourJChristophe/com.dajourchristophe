@@ -1,6 +1,8 @@
 *.crt
 *.exe
 *.key
+.env.prod
+infra/docker/.env.prod
 
 formulas.txt
 fractal.cc

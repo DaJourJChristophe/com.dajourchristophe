@@ -1,3 +1,4 @@
+// Side-effect import: initialize Sentry for direct app consumers and tests too.
 import './instrument';
 import express from 'express';
 import path from 'node:path';

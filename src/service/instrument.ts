@@ -1,6 +1,14 @@
 import * as Sentry from '@sentry/node';
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN ?? 'https://744f8bc4655cab91b076825eb8d27d4b@o4509017062637568.ingest.us.sentry.io/4511203008315392',
-  sendDefaultPii: true
-});
+const sentryDsn = process.env.SENTRY_DSN?.trim();
+
+// This module is imported for its side effect so Sentry is initialized
+// before the Express app and route handlers are created.
+if (sentryDsn) {
+  Sentry.init({
+    dsn: sentryDsn,
+    environment: process.env.SENTRY_ENVIRONMENT ?? process.env.NODE_ENV ?? 'development',
+    release: process.env.SENTRY_RELEASE,
+    sendDefaultPii: true
+  });
+}
