@@ -3,6 +3,9 @@ set -euo pipefail
 
 export DEBIAN_FRONTEND=noninteractive
 
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl gnupg
+
 sudo rm -f /etc/apt/sources.list.d/docker.list /etc/apt/keyrings/docker.gpg
 sudo install -m 0755 -d /etc/apt/keyrings
 
@@ -19,6 +22,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 
 sudo systemctl enable docker
 sudo systemctl start docker
+sudo usermod -aG docker "$USER" || true
 
 docker --version
 docker compose version
