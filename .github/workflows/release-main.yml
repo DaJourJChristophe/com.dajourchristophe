@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,7 +15,6 @@ concurrency:
 
 jobs:
   release-minor:
-    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release): minor ') }}
     runs-on: ubuntu-latest
 
     steps:
@@ -29,31 +29,51 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Skip existing release commits
+        id: release_guard
+        env:
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [[ "$HEAD_COMMIT_MESSAGE" == chore\(release\):\ minor* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Install dependencies
+        if: steps.release_guard.outputs.skip != 'true'
         run: npm ci
 
       - name: Install Playwright browsers
+        if: steps.release_guard.outputs.skip != 'true'
         run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Validate release candidate
+        if: steps.release_guard.outputs.skip != 'true'
         run: npm run ci
 
       - name: Configure Git identity
+        if: steps.release_guard.outputs.skip != 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Require release token
+        if: steps.release_guard.outputs.skip != 'true'
+        env:
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
-          if [ -z "${{ secrets.RELEASE_PAT }}" ]; then
+          if [ -z "$RELEASE_PAT" ]; then
             echo "RELEASE_PAT secret is required so release tags can trigger downstream workflows."
             exit 1
           fi
 
       - name: Bump minor version
+        if: steps.release_guard.outputs.skip != 'true'
         run: node scripts/bump-version.mjs minor
 
       - name: Commit and tag release
+        if: steps.release_guard.outputs.skip != 'true'
         env:
           RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
