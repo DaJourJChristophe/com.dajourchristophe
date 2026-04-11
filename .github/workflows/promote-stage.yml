@@ -1,0 +1,61 @@
+name: Promote Stage
+
+on:
+  push:
+    branches:
+      - stage
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: promote-stage
+  cancel-in-progress: false
+
+jobs:
+  validate-stage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: Validate stage branch
+        run: npm run ci
+
+      - name: Create or update promotion PR to main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git fetch origin main stage
+
+          if git diff --quiet origin/main...origin/stage; then
+            echo "No stage changes to promote."
+            exit 0
+          fi
+
+          PR_NUMBER="$(gh pr list --base main --head stage --state open --json number --jq '.[0].number')"
+
+          if [ -z "$PR_NUMBER" ]; then
+            PR_URL="$(gh pr create --base main --head stage --title "chore(stage): promote to main" --body "Automated promotion from stage after successful validation.")"
+            echo "Created PR $PR_URL"
+            gh pr merge "$PR_URL" --auto --squash --delete-branch=false
+          else
+            echo "Promotion PR already open: #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --auto --squash --delete-branch=false
+          fi

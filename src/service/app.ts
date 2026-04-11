@@ -1,5 +1,8 @@
+// Side-effect import: initialize Sentry for direct app consumers and tests too.
+import './instrument';
 import express from 'express';
 import path from 'node:path';
+import * as Sentry from '@sentry/node';
 import { createTokenBucketRateLimiter } from './token-bucket';
 
 /**
@@ -61,8 +64,24 @@ export function createApp(rootPath: string, options: AppOptions = {}): express.E
     });
   });
 
+  app.get('/debug-sentry', (_request, _response) => {
+    throw new Error('My first Sentry error!');
+  });
+
   app.get('/', (_request, response) => {
     response.sendFile(path.join(rootPath, 'client', 'index.html'));
+  });
+
+  Sentry.setupExpressErrorHandler(app);
+  app.use((error: unknown, _request: express.Request, response: express.Response & { sentry?: string }, _next: express.NextFunction) => {
+    if (response.headersSent) {
+      return;
+    }
+
+    response
+      .status(500)
+      .type('text/plain')
+      .send(`${response.sentry ?? 'Internal Server Error'}\n`);
   });
 
   return app;

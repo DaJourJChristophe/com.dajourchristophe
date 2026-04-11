@@ -14,6 +14,18 @@ fi
 
 cd "$REPO_PATH"
 
+if [ -f "$REPO_PATH/.env.prod" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . "$REPO_PATH/.env.prod"
+  set +a
+elif [ -f "$REPO_PATH/infra/docker/.env.prod" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . "$REPO_PATH/infra/docker/.env.prod"
+  set +a
+fi
+
 if ! docker info >/dev/null 2>&1; then
   DOCKER_COMPOSE_PREFIX=(sudo docker compose)
 fi

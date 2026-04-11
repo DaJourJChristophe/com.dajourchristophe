@@ -1,9 +1,8 @@
-
+- Call GoDaddy
 
 - Monitoring (Sentry)
 - Google analytics
 - Open Graph
-- Gateway
 
 =============================
 
