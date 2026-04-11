@@ -43,12 +43,22 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+      - name: Require release token
+        run: |
+          if [ -z "${{ secrets.RELEASE_PAT }}" ]; then
+            echo "RELEASE_PAT secret is required so release tags can trigger downstream workflows."
+            exit 1
+          fi
+
       - name: Bump minor version
         run: node scripts/bump-version.mjs minor
 
       - name: Commit and tag release
+        env:
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
           VERSION="$(node -p "require('./package.json').version")"
+          git remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
           git add package.json package-lock.json
           git commit -m "chore(release): minor v$VERSION"
           git tag "v$VERSION"

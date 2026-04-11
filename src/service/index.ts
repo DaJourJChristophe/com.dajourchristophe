@@ -1,3 +1,5 @@
+// Side-effect import: initialize Sentry before all other service imports.
+import './instrument';
 import path from 'node:path';
 import { createApp } from './app';
 

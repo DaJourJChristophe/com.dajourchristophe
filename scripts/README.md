@@ -2,6 +2,20 @@
 
 Automation and host-side helpers live here.
 
+## Branch strategy
+
+- `dev`: everyday integration branch with CI validation and no version bumping
+- `stage`: promotion branch that validates and opens an auto-merge PR into `main`
+- `main`: production release branch with automated minor version tagging and deploys
+
+Recommended flow:
+
+1. push to `dev`
+2. open a PR from `dev` to `stage`
+3. merge into `stage`
+4. CI validates `stage` and opens an auto-merge PR into `main`
+5. merging into `main` triggers the minor version bump, tag, and production deploy
+
 ## Remote AWS deploy
 
 Run this on the EC2 instance:
@@ -26,6 +40,32 @@ The deploy flow will:
 3. install Docker and Docker Compose on Debian
 4. deploy the production stack with `nginx` in front of the app
 
+## Production env vars
+
+Production secrets should stay out of git.
+
+Create either:
+
+```bash
+.env.prod
+```
+
+or:
+
+```bash
+infra/docker/.env.prod
+```
+
+with values like:
+
+```bash
+SENTRY_DSN=your-sentry-dsn
+SENTRY_ENVIRONMENT=production
+SENTRY_RELEASE=
+```
+
+`scripts/deploy-prod.sh` will load that file before starting the production stack.
+
 ## Version bump helpers
 
 Minor release bump:
@@ -39,3 +79,20 @@ Major release bump:
 ```bash
 node scripts/bump-version.mjs major
 ```
+
+## Protecting stage and main
+
+Use a GitHub token with admin rights to the repository:
+
+```bash
+GITHUB_TOKEN=<admin-token> GITHUB_REPOSITORY=DaJourJChristophe/com.dajourchristophe node scripts/configure-branch-protection.mjs
+```
+
+That will:
+
+1. enable repository auto-merge
+2. require PR-based merges on `stage`
+3. require PR-based merges on `main`
+4. block force-pushes and branch deletions on both branches
+
+The protection intentionally requires pull requests, not human approvals, so the automated `stage -> main` promotion can still auto-merge after CI passes.
