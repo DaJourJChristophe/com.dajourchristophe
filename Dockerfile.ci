@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/playwright:v1.59.1-noble
+
+WORKDIR /workspace
+
+ENV CI=true
+ENV HOST=127.0.0.1
+ENV PORT=3100
+
+COPY package.json package-lock.json ./
+
+RUN npm ci
+
+COPY . .
+
+CMD ["npm", "run", "ci"]

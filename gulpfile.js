@@ -261,6 +261,56 @@ function uat(done) {
 const dev = gulp.series(stylesDev, clientDev, serviceDev, htmlDev);
 const prod = gulp.series(stylesProd, clientProd, serviceProd, gulp.parallel(cssMin, jsMin), htmlProd);
 
+/**
+ * Watches SCSS sources and rebuilds development CSS on change.
+ *
+ * @returns {FSWatcher} Active Gulp watcher instance.
+ */
+function watchStyles() {
+  return gulp.watch('assets/scss/**/*.scss', stylesDev);
+}
+
+/**
+ * Watches client TypeScript sources and rebuilds the browser bundle on change.
+ *
+ * @returns {FSWatcher} Active Gulp watcher instance.
+ */
+function watchClient() {
+  return gulp.watch('src/client/**/*.ts', clientDev);
+}
+
+/**
+ * Watches service TypeScript sources and rebuilds the loopback service on change.
+ *
+ * @returns {FSWatcher} Active Gulp watcher instance.
+ */
+function watchService() {
+  return gulp.watch('src/service/**/*.ts', serviceDev);
+}
+
+/**
+ * Watches Jade/Pug sources and regenerates development HTML on change.
+ *
+ * @returns {FSWatcher} Active Gulp watcher instance.
+ */
+function watchHtml() {
+  return gulp.watch(['template/index.jade', 'template/partials/**/*.pug'], htmlDev);
+}
+
+/**
+ * Starts the development build and keeps file watchers active.
+ *
+ * @param {Function} done - Gulp completion callback.
+ * @returns {void}
+ */
+function watch(done) {
+  watchStyles();
+  watchClient();
+  watchService();
+  watchHtml();
+  done();
+}
+
 exports['html:dev'] = htmlDev;
 exports['html:prod'] = htmlProd;
 exports['styles:dev'] = stylesDev;
@@ -272,6 +322,7 @@ exports['service:prod'] = serviceProd;
 exports['server:dev'] = serviceDev;
 exports['server:prod'] = serviceProd;
 exports.uat = uat;
+exports.watch = gulp.series(dev, watch);
 exports.dev = dev;
 exports.prod = prod;
 exports.build = dev;

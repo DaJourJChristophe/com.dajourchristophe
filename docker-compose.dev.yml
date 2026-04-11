@@ -1,0 +1,27 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: com-dajour-dev
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/workspace
+      - com-dajour-node-modules:/workspace/node_modules
+    working_dir: /workspace
+    entrypoint:
+      - sh
+      - -c
+      - |
+        if [ ! -d /workspace/node_modules/gulp ]; then
+          npm install
+        fi
+        node /workspace/scripts/dev-container.cjs
+
+volumes:
+  com-dajour-node-modules:

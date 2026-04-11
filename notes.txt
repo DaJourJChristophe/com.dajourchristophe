@@ -2,8 +2,6 @@
 
 - UAT (+security)
 
-- Hoist (Docker)
-
 - Host (AWS)
 
 - DNS (GoDaddy, Namecheap)

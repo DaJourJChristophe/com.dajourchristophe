@@ -1,0 +1,12 @@
+services:
+  ci:
+    build:
+      context: .
+      dockerfile: Dockerfile.ci
+    container_name: com-dajour-ci
+    working_dir: /workspace
+    environment:
+      CI: "true"
+      HOST: 127.0.0.1
+      PORT: 3100
+    command: npm run ci

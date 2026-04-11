@@ -7,16 +7,19 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "gulp build",
-    "build:dev": "gulp dev",
-    "build:prod": "gulp prod",
-    "build:server": "gulp service:dev",
-    "build:service": "gulp service:dev",
+    "build": "gulp --gulpfile ./gulpfile.js build",
+    "build:dev": "gulp --gulpfile ./gulpfile.js dev",
+    "build:prod": "gulp --gulpfile ./gulpfile.js prod",
+    "build:server": "gulp --gulpfile ./gulpfile.js service:dev",
+    "build:service": "gulp --gulpfile ./gulpfile.js service:dev",
+    "ci": "npm run build:dev && npm run test:unit && npm run uat",
+    "watch": "gulp --gulpfile ./gulpfile.js watch",
+    "dev:container": "node scripts/dev-container.cjs",
     "start": "node src/service/index.js",
     "serve": "npm run build:dev && npm run start",
     "test": "npm run test:unit",
     "test:unit": "npm run build:service && node --test test/unit/*.test.js",
-    "uat": "gulp uat"
+    "uat": "gulp --gulpfile ./gulpfile.js uat"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +29,7 @@
     "@playwright/test": "^1.59.1",
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
+    "concurrently": "^9.2.1",
     "esbuild": "^0.28.0",
     "gulp": "^5.0.1",
     "gulp-clean-css": "^4.3.0",
