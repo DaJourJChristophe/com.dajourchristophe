@@ -9,7 +9,7 @@ const host = process.env.HOST ?? '127.0.0.1';
 /**
  * TCP port used by the local development service.
  */
-const port = Number.parseInt(process.env.PORT ?? '3000', 10);
+const port = Number.parseInt(process.env.PORT ?? (process.env.NODE_ENV === 'production' ? '80' : '3000'), 10);
 
 /**
  * Absolute build root resolved from the compiled service entrypoint.

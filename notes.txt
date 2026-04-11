@@ -1,7 +1,5 @@
 
 
-- Host (AWS)
-- SSL (???)
 - Monitoring (Sentry)
 - Google analytics
 - Open Graph
