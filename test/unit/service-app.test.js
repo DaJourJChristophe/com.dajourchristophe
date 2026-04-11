@@ -122,3 +122,19 @@ test('service app serves robots.txt from the web root', async () => {
     await server.close();
   }
 });
+
+test('service app serves a health check endpoint', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath);
+  const server = await listen(app);
+
+  try {
+    const response = await fetch(`${server.baseUrl}/healthz`);
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.status, 'ok');
+  } finally {
+    await server.close();
+  }
+});

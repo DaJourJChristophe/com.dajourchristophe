@@ -53,6 +53,12 @@ export function createApp(rootPath: string, options: AppOptions = {}): express.E
     response.sendFile(path.join(rootPath, 'client', 'robots.txt'));
   });
 
+  app.get('/healthz', (_request, response) => {
+    response.status(200).json({
+      status: 'ok'
+    });
+  });
+
   app.get('/', (_request, response) => {
     response.sendFile(path.join(rootPath, 'client', 'index.html'));
   });
