@@ -1,0 +1,51 @@
+name: Sync Main Back To Stage
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-main-back-to-stage
+  cancel-in-progress: false
+
+jobs:
+  sync-main-to-stage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create or update sync PR from main to stage
+        env:
+          GH_TOKEN: ${{ secrets.PROMOTION_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "PROMOTION_PAT secret is required so GitHub Actions can sync main back into stage."
+            exit 1
+          fi
+
+          git fetch origin main stage
+
+          if git diff --quiet origin/stage...origin/main; then
+            echo "Stage is already aligned with main."
+            exit 0
+          fi
+
+          PR_NUMBER="$(gh pr list --base stage --head main --state open --json number --jq '.[0].number')"
+
+          if [ -z "$PR_NUMBER" ]; then
+            PR_URL="$(gh pr create --base stage --head main --title "chore(sync): main back to stage" --body "Keeps stage aligned with the latest production branch changes so future stage promotions stay mergeable.")"
+            echo "Created sync PR $PR_URL"
+            gh pr merge "$PR_URL" --auto --rebase --delete-branch=false
+          else
+            echo "Sync PR already open: #$PR_NUMBER"
+            gh pr merge "$PR_NUMBER" --auto --rebase --delete-branch=false
+          fi
