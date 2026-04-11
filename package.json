@@ -19,7 +19,7 @@
     "serve": "npm run build:dev && npm run start",
     "test": "npm run test:unit",
     "test:unit": "npm run build:dev && node --test test/unit/*.test.js",
-    "uat": "gulp --gulpfile ./gulpfile.js uat"
+    "uat": "npm run build:dev && gulp --gulpfile ./gulpfile.js uat"
   },
   "keywords": [],
   "author": "",

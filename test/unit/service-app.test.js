@@ -50,6 +50,74 @@ test('service app serves the generated portfolio shell', async () => {
     assert.equal(response.status, 200);
     assert.match(body, /Da'Jour Christophe/);
     assert.equal(response.headers.get('x-powered-by'), null);
+    assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+    assert.equal(response.headers.get('x-frame-options'), 'DENY');
+    assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+    assert.match(response.headers.get('content-security-policy') ?? '', /default-src 'self'/);
+    assert.equal(response.headers.get('x-ratelimit-limit'), '1000');
+  } finally {
+    await server.close();
+  }
+});
+
+test('service app applies token bucket rate limiting', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath, {
+    rateLimitCapacity: 2,
+    rateLimitRefillRate: 0.01
+  });
+  const server = await listen(app);
+
+  try {
+    const first = await fetch(`${server.baseUrl}/`);
+    const second = await fetch(`${server.baseUrl}/`);
+    const third = await fetch(`${server.baseUrl}/`);
+    const body = await third.json();
+
+    assert.equal(first.status, 200);
+    assert.equal(second.status, 200);
+    assert.equal(third.status, 429);
+    assert.equal(body.error, 'Too Many Requests');
+    assert.equal(third.headers.get('retry-after'), '100');
+    assert.equal(third.headers.get('x-ratelimit-limit'), '2');
+    assert.equal(third.headers.get('x-ratelimit-remaining'), '0');
+  } finally {
+    await server.close();
+  }
+});
+
+test('service app serves sitemap.xml from the web root', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath);
+  const server = await listen(app);
+
+  try {
+    const response = await fetch(`${server.baseUrl}/sitemap.xml`);
+    const body = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type') ?? '', /application\/xml/);
+    assert.match(body, /<urlset/);
+    assert.match(body, /<loc>http:\/\/127\.0\.0\.1:3000\/<\/loc>/);
+  } finally {
+    await server.close();
+  }
+});
+
+test('service app serves robots.txt from the web root', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath);
+  const server = await listen(app);
+
+  try {
+    const response = await fetch(`${server.baseUrl}/robots.txt`);
+    const body = await response.text();
+
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get('content-type') ?? '', /text\/plain/);
+    assert.match(body, /User-agent: \*/);
+    assert.match(body, /Allow: \//);
+    assert.match(body, /Sitemap: http:\/\/127\.0\.0\.1:3000\/sitemap\.xml/);
   } finally {
     await server.close();
   }

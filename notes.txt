@@ -1,13 +1,17 @@
 
 
-- UAT (+security)
-
-
-
-
-
 - Host (AWS)
-
 - SSL (???)
+- Monitoring (Sentry)
+- Google analytics
+- Open Graph
 
-- Skeletons
+=============================
+
+- Skeletons (dynamic, maybe?)
+- Color (bound to user interaction(s))
+
+=============================
+
+I18
+  - sqlite3

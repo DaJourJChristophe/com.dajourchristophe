@@ -1,7 +1,10 @@
 doctype html
+
 //- Main Jade entrypoint. Partial files below compose the generated portfolio shell.
-html.no-js(dir='ltr', lang='en-US')
+html.no-js(dir='ltr', lang='en-US' itemscope='' itemtype='http://schema.org/WebPage')
+
   include partials/_head
+
   body
     .page
       include partials/_splash
@@ -10,4 +13,5 @@ html.no-js(dir='ltr', lang='en-US')
       include partials/_left-menu
       include partials/_banner
       include partials/_footer
+
     script(src=jsHref)

@@ -73,6 +73,22 @@ function copyStaticAssets() {
 }
 
 /**
+ * Copies root metadata files that should be served from the web root.
+ *
+ * @returns {void}
+ */
+function copyRootMetadata() {
+  const sitemapSourcePath = path.join(__dirname, 'template', 'static', 'sitemap.xml');
+  const sitemapOutputPath = path.join(buildClientPath, 'sitemap.xml');
+  const robotsSourcePath = path.join(__dirname, 'template', 'static', 'robots.txt');
+  const robotsOutputPath = path.join(buildClientPath, 'robots.txt');
+
+  ensureDirectory(buildClientPath);
+  fs.copyFileSync(sitemapSourcePath, sitemapOutputPath);
+  fs.copyFileSync(robotsSourcePath, robotsOutputPath);
+}
+
+/**
  * Renders the Jade entrypoint into the generated HTML file.
  *
  * @param {string} cssHref - Stylesheet href to inject into the template.
@@ -100,6 +116,7 @@ function buildHtml(cssHref, jsHref) {
  * @returns {void}
  */
 function htmlDev(done) {
+  copyRootMetadata();
   buildHtml('./assets/css/index.css', './assets/js/index.js');
   done();
 }
@@ -111,6 +128,7 @@ function htmlDev(done) {
  * @returns {void}
  */
 function htmlProd(done) {
+  copyRootMetadata();
   buildHtml('./assets/css/index.min.css', './assets/js/index.min.js');
   done();
 }

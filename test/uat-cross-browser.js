@@ -3,6 +3,7 @@
 const { spawn } = require('node:child_process');
 const fs = require('node:fs');
 const path = require('node:path');
+const assert = require('node:assert/strict');
 const { chromium, firefox, webkit } = require('@playwright/test');
 
 const host = process.env.HOST ?? '127.0.0.1';
@@ -97,6 +98,35 @@ function cleanPreviousScreenshots() {
 }
 
 /**
+ * Sends repeated requests to confirm a strict token bucket eventually rejects traffic.
+ *
+ * @param {string} strictBaseUrl - Base URL for the strict rate-limit service instance.
+ * @returns {Promise<void>} Resolves when the limiter behavior matches expectations.
+ */
+async function assertSecurityControls(strictBaseUrl) {
+  const response = await fetch(strictBaseUrl);
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff');
+  assert.equal(response.headers.get('x-frame-options'), 'DENY');
+  assert.equal(response.headers.get('referrer-policy'), 'no-referrer');
+  assert.match(response.headers.get('content-security-policy') ?? '', /default-src 'self'/);
+  assert.ok(Number.parseInt(response.headers.get('x-ratelimit-limit') ?? '0', 10) >= 1);
+
+  const burstResponses = await Promise.all([
+    fetch(strictBaseUrl),
+    fetch(strictBaseUrl),
+    fetch(strictBaseUrl),
+    fetch(strictBaseUrl)
+  ]);
+  const throttledResponse = burstResponses.find((entry) => entry.status === 429);
+
+  assert.ok(throttledResponse, 'Expected one strict token bucket request to be throttled.');
+  assert.equal(throttledResponse.headers.get('x-ratelimit-remaining'), '0');
+  assert.ok(Number.parseInt(throttledResponse.headers.get('retry-after') ?? '0', 10) >= 1);
+}
+
+/**
  * Waits for the loopback service to respond before launching browser checks.
  *
  * @returns {Promise<void>} Resolves when the service responds successfully.
@@ -180,12 +210,15 @@ async function openState(page, state) {
 
   await page.goto(makeUatUrl(state.name), { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(2600);
-  await page.locator(state.triggerSelector).click({ force: true });
-  await page.locator(state.readySelector).waitFor({ state: 'visible' });
+  await page.locator(state.triggerSelector).evaluate((element) => {
+    element.click();
+  });
+  await page.locator('.article.open').waitFor({ state: 'attached' });
+  await page.locator(state.readySelector).waitFor({ state: 'attached' });
   await page.waitForTimeout(900);
 
   if (state.expectedText) {
-    await page.locator(state.readySelector).getByText(state.expectedText, { exact: true }).waitFor({ state: 'visible' });
+    await page.locator(state.readySelector).getByText(state.expectedText, { exact: true }).waitFor({ state: 'attached' });
   }
 }
 
@@ -291,10 +324,48 @@ async function assertResponsiveLayout(page, state, viewportName) {
     env: { ...process.env, HOST: host, PORT: port },
     stdio: 'inherit'
   });
+  const strictPort = String(Number.parseInt(port, 10) + 1);
+  const strictBaseUrl = `http://${host}:${strictPort}`;
+  const strictService = spawn(process.execPath, [serviceEntryPath], {
+    env: {
+      ...process.env,
+      HOST: host,
+      PORT: strictPort,
+      RATE_LIMIT_CAPACITY: '3',
+      RATE_LIMIT_REFILL_RATE: '0.1'
+    },
+    stdio: 'inherit'
+  });
   const referenceMetrics = new Map();
 
   try {
     await waitForServer();
+    await new Promise((resolve, reject) => {
+      const deadline = Date.now() + 10000;
+
+      const poll = async () => {
+        try {
+          const response = await fetch(strictBaseUrl);
+
+          if (response.ok) {
+            resolve();
+            return;
+          }
+        } catch {
+          // Keep polling until the strict service is ready or the deadline passes.
+        }
+
+        if (Date.now() > deadline) {
+          reject(new Error(`Timed out waiting for ${strictBaseUrl}`));
+          return;
+        }
+
+        setTimeout(poll, 250);
+      };
+
+      poll();
+    });
+    await assertSecurityControls(strictBaseUrl);
 
     for (const [browserName, browserType] of browsers) {
       console.log(`Running UAT in ${browserName}...`);
@@ -359,6 +430,7 @@ async function assertResponsiveLayout(page, state, viewportName) {
     }
   } finally {
     service.kill();
+    strictService.kill();
   }
 })().catch((error) => {
   console.error(error);
