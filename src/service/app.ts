@@ -28,6 +28,8 @@ export function createApp(rootPath: string, options: AppOptions = {}): express.E
   const rateLimitCapacity = options.rateLimitCapacity ?? Number.parseInt(process.env.RATE_LIMIT_CAPACITY ?? '1000', 10);
   const rateLimitRefillRate = options.rateLimitRefillRate ?? Number.parseFloat(process.env.RATE_LIMIT_REFILL_RATE ?? '300');
 
+  // Trust the edge proxy so request.ip reflects the original client address behind nginx.
+  app.set('trust proxy', true);
   app.disable('x-powered-by');
   app.use((_, response, next) => {
     response.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self'; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");

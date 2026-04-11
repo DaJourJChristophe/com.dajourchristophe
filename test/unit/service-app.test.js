@@ -86,6 +86,33 @@ test('service app applies token bucket rate limiting', async () => {
   }
 });
 
+test('service app honors forwarded client addresses behind the nginx gateway', async () => {
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
+  const app = createApp(rootPath, {
+    rateLimitCapacity: 1,
+    rateLimitRefillRate: 0.01
+  });
+  const server = await listen(app);
+
+  try {
+    const first = await fetch(`${server.baseUrl}/`, {
+      headers: {
+        'X-Forwarded-For': '203.0.113.10'
+      }
+    });
+    const second = await fetch(`${server.baseUrl}/`, {
+      headers: {
+        'X-Forwarded-For': '198.51.100.24'
+      }
+    });
+
+    assert.equal(first.status, 200);
+    assert.equal(second.status, 200);
+  } finally {
+    await server.close();
+  }
+});
+
 test('service app serves sitemap.xml from the web root', async () => {
   const rootPath = path.resolve(__dirname, '..', '..', 'build');
   const app = createApp(rootPath);

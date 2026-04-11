@@ -19,3 +19,5 @@ git pull --ff-only origin "$BRANCH"
 
 docker compose -f infra/docker/docker-compose.prod.yml up --build -d
 docker compose -f infra/docker/docker-compose.prod.yml ps
+echo "Gateway health:"
+curl --fail --silent http://127.0.0.1/healthz || true
