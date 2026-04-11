@@ -10,10 +10,16 @@ const pug = require('pug');
 const sass = require('sass');
 const uglify = require('gulp-uglify');
 
+const buildRootPath = path.join(__dirname, 'build');
+const buildClientPath = path.join(buildRootPath, 'client');
+const buildClientAssetsPath = path.join(buildClientPath, 'assets');
+const buildServicePath = path.join(buildRootPath, 'service');
+const buildTestPath = path.join(buildRootPath, 'test');
+const buildUatPath = path.join(buildTestPath, 'uat');
 const cssSourcePath = path.join(__dirname, 'assets', 'scss', 'index.scss');
-const cssOutputPath = path.join(__dirname, 'assets', 'css', 'index.css');
-const cssMapPath = path.join(__dirname, 'assets', 'css', 'index.css.map');
-const clientOutputPath = path.join(__dirname, 'assets', 'js');
+const cssOutputPath = path.join(buildClientAssetsPath, 'css', 'index.css');
+const cssMapPath = path.join(buildClientAssetsPath, 'css', 'index.css.map');
+const clientOutputPath = path.join(buildClientAssetsPath, 'js');
 const clientBundlePath = path.join(clientOutputPath, 'index.js');
 const playwrightUatPath = path.join(__dirname, 'test', 'uat-cross-browser.js');
 const tscPath = path.join(__dirname, 'node_modules', 'typescript', 'bin', 'tsc');
@@ -26,6 +32,17 @@ const tscPath = path.join(__dirname, 'node_modules', 'typescript', 'bin', 'tsc')
  */
 function ensureDirectory(directoryPath) {
   fs.mkdirSync(directoryPath, { recursive: true });
+}
+
+/**
+ * Removes a directory when it already exists.
+ *
+ * @param {string} directoryPath - Directory path to remove.
+ * @returns {void}
+ */
+function resetDirectory(directoryPath) {
+  fs.rmSync(directoryPath, { force: true, recursive: true });
+  ensureDirectory(directoryPath);
 }
 
 /**
@@ -44,6 +61,18 @@ function cleanClientBuildArtifacts() {
 }
 
 /**
+ * Copies source static images into the generated client asset tree.
+ *
+ * @returns {void}
+ */
+function copyStaticAssets() {
+  const sourceAssetPath = path.join(__dirname, 'assets', 'img');
+  const outputAssetPath = path.join(buildClientAssetsPath, 'img');
+
+  fs.cpSync(sourceAssetPath, outputAssetPath, { force: true, recursive: true });
+}
+
+/**
  * Renders the Jade entrypoint into the generated HTML file.
  *
  * @param {string} cssHref - Stylesheet href to inject into the template.
@@ -52,7 +81,7 @@ function cleanClientBuildArtifacts() {
  */
 function buildHtml(cssHref, jsHref) {
   const sourcePath = path.join(__dirname, 'template', 'index.jade');
-  const outputPath = path.join(__dirname, 'template', 'index.html');
+  const outputPath = path.join(buildClientPath, 'index.html');
   const html = pug.renderFile(sourcePath, {
     cssHref,
     filename: sourcePath,
@@ -60,6 +89,7 @@ function buildHtml(cssHref, jsHref) {
     pretty: true
   });
 
+  ensureDirectory(path.dirname(outputPath));
   fs.writeFileSync(outputPath, html, 'utf8');
 }
 
@@ -70,7 +100,7 @@ function buildHtml(cssHref, jsHref) {
  * @returns {void}
  */
 function htmlDev(done) {
-  buildHtml('../assets/css/index.css', '../assets/js/index.js');
+  buildHtml('./assets/css/index.css', './assets/js/index.js');
   done();
 }
 
@@ -81,7 +111,7 @@ function htmlDev(done) {
  * @returns {void}
  */
 function htmlProd(done) {
-  buildHtml('../assets/css/index.min.css', '../assets/js/index.min.js');
+  buildHtml('./assets/css/index.min.css', './assets/js/index.min.js');
   done();
 }
 
@@ -92,6 +122,7 @@ function htmlProd(done) {
  * @returns {void}
  */
 function stylesDev(done) {
+  copyStaticAssets();
   const result = sass.compile(cssSourcePath, {
     charset: true,
     sourceMap: true,
@@ -112,6 +143,7 @@ function stylesDev(done) {
  * @returns {void}
  */
 function stylesProd(done) {
+  copyStaticAssets();
   const result = sass.compile(cssSourcePath, {
     charset: true,
     style: 'expanded'
@@ -179,6 +211,7 @@ function clientProd(done) {
  * @returns {void}
  */
 function buildService(sourceMap) {
+  resetDirectory(buildServicePath);
   execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.server.json', '--sourceMap', String(sourceMap)], {
     cwd: __dirname,
     stdio: 'inherit'
@@ -186,8 +219,8 @@ function buildService(sourceMap) {
 
   if (!sourceMap) {
     const serviceMapPaths = [
-      path.join(__dirname, 'src', 'service', 'app.js.map'),
-      path.join(__dirname, 'src', 'service', 'index.js.map')
+      path.join(buildServicePath, 'app.js.map'),
+      path.join(buildServicePath, 'index.js.map')
     ];
 
     serviceMapPaths.forEach((mapPath) => {
@@ -226,10 +259,10 @@ function serviceProd(done) {
  * @returns {NodeJS.ReadWriteStream} Gulp stream for the minification task.
  */
 function cssMin() {
-  return gulp.src('assets/css/index.css')
+  return gulp.src(path.join(buildClientAssetsPath, 'css', 'index.css'))
     .pipe(cleanCss())
     .pipe(require('gulp-rename')('index.min.css'))
-    .pipe(gulp.dest('assets/css'));
+    .pipe(gulp.dest(path.join(buildClientAssetsPath, 'css')));
 }
 
 /**
@@ -238,10 +271,10 @@ function cssMin() {
  * @returns {NodeJS.ReadWriteStream} Gulp stream for the minification task.
  */
 function jsMin() {
-  return gulp.src('assets/js/index.js')
+  return gulp.src(path.join(buildClientAssetsPath, 'js', 'index.js'))
     .pipe(uglify())
     .pipe(require('gulp-rename')('index.min.js'))
-    .pipe(gulp.dest('assets/js'));
+    .pipe(gulp.dest(path.join(buildClientAssetsPath, 'js')));
 }
 
 /**
@@ -251,8 +284,13 @@ function jsMin() {
  * @returns {void}
  */
 function uat(done) {
+  ensureDirectory(buildUatPath);
   execFileSync(process.execPath, [playwrightUatPath], {
     cwd: __dirname,
+    env: {
+      ...process.env,
+      UAT_OUTPUT_DIR: buildUatPath
+    },
     stdio: 'inherit'
   });
   done();

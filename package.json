@@ -2,7 +2,7 @@
   "name": "com.dajour",
   "version": "1.0.0",
   "description": "",
-  "main": "src/service/index.js",
+  "main": "build/service/index.js",
   "directories": {
     "doc": "docs"
   },
@@ -15,10 +15,10 @@
     "ci": "npm run build:dev && npm run test:unit && npm run uat",
     "watch": "gulp --gulpfile ./gulpfile.js watch",
     "dev:container": "node scripts/dev-container.cjs",
-    "start": "node src/service/index.js",
+    "start": "node build/service/index.js",
     "serve": "npm run build:dev && npm run start",
     "test": "npm run test:unit",
-    "test:unit": "npm run build:service && node --test test/unit/*.test.js",
+    "test:unit": "npm run build:dev && node --test test/unit/*.test.js",
     "uat": "gulp --gulpfile ./gulpfile.js uat"
   },
   "keywords": [],

@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: infra/docker/Dockerfile
     container_name: com-dajour-dev
     environment:
       HOST: 0.0.0.0
@@ -11,7 +11,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - .:/workspace
+      - ../..:/workspace
       - com-dajour-node-modules:/workspace/node_modules
     working_dir: /workspace
     entrypoint:

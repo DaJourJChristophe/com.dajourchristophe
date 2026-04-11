@@ -2,8 +2,12 @@
 
 - UAT (+security)
 
+
+
+
+
 - Host (AWS)
 
-- DNS (GoDaddy, Namecheap)
+- SSL (???)
 
-- SSL
+- Skeletons

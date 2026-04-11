@@ -321,8 +321,8 @@ export class PageController {
   </li>
   <li class="list-item">
     <figure class="fig">
-      <img class="img" src="../assets/img/profile2.jpg" alt="Portrait of Da'Jour J. Christophe" />
-      <img class="img" src="../assets/img/profile2.jpg" alt="" aria-hidden="true" />
+      <img class="img" src="./assets/img/profile2.jpg" alt="Portrait of Da'Jour J. Christophe" />
+      <img class="img" src="./assets/img/profile2.jpg" alt="" aria-hidden="true" />
     </figure>
     <span class="quote" style="color: #111"><em>"I don't follow systems. I design them."</em><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #333;">- Da'Jour J. Christophe</span></span>
   </li>

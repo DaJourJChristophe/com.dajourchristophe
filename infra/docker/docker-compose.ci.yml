@@ -1,8 +1,8 @@
 services:
   ci:
     build:
-      context: .
-      dockerfile: Dockerfile.ci
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.ci
     container_name: com-dajour-ci
     working_dir: /workspace
     environment:

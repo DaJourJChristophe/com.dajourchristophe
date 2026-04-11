@@ -3,7 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "rootDir": "src/client",
-    "outDir": "assets/js",
+    "outDir": "build/client/assets/js",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

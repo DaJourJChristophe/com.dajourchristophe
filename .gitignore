@@ -1,13 +1,4 @@
-*.css
-*.html
-*.map
-
-assets/css/
-!assets/css/.keep
-assets/js/
-!assets/js/.keep
-dist/
+build/
 node_modules/
-/src/service/*.js
 tmp/
 /test/uat-*.png

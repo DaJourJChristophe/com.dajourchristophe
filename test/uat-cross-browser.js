@@ -8,6 +8,8 @@ const { chromium, firefox, webkit } = require('@playwright/test');
 const host = process.env.HOST ?? '127.0.0.1';
 const port = process.env.PORT ?? '3100';
 const baseUrl = process.env.UAT_BASE_URL ?? `http://${host}:${port}`;
+const outputDirectoryPath = process.env.UAT_OUTPUT_DIR ?? path.join(__dirname);
+const serviceEntryPath = path.resolve(__dirname, '..', 'build', 'service', 'index.js');
 const viewport = { width: 1440, height: 900 };
 const tolerance = 8;
 const browsers = [
@@ -85,11 +87,11 @@ const states = [
  * @returns {void}
  */
 function cleanPreviousScreenshots() {
-  const testPath = path.join(__dirname);
+  fs.mkdirSync(outputDirectoryPath, { recursive: true });
 
-  for (const entry of fs.readdirSync(testPath)) {
+  for (const entry of fs.readdirSync(outputDirectoryPath)) {
     if (/^uat-.*\.png$/.test(entry)) {
-      fs.unlinkSync(path.join(testPath, entry));
+      fs.unlinkSync(path.join(outputDirectoryPath, entry));
     }
   }
 }
@@ -285,7 +287,7 @@ async function assertResponsiveLayout(page, state, viewportName) {
 (async () => {
   cleanPreviousScreenshots();
 
-  const service = spawn(process.execPath, ['src/service/index.js'], {
+  const service = spawn(process.execPath, [serviceEntryPath], {
     env: { ...process.env, HOST: host, PORT: port },
     stdio: 'inherit'
   });
@@ -320,7 +322,7 @@ async function assertResponsiveLayout(page, state, viewportName) {
           await page.screenshot({
             animations: 'disabled',
             fullPage: true,
-            path: `test/uat-${browserName}-${state.name}.png`
+            path: path.join(outputDirectoryPath, `uat-${browserName}-${state.name}.png`)
           });
         }
       } finally {
@@ -348,7 +350,7 @@ async function assertResponsiveLayout(page, state, viewportName) {
           await page.screenshot({
             animations: 'disabled',
             fullPage: true,
-            path: `test/uat-responsive-${viewportName}-${state.name}.png`
+            path: path.join(outputDirectoryPath, `uat-responsive-${viewportName}-${state.name}.png`)
           });
         }
       }

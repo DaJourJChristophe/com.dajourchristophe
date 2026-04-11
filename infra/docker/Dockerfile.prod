@@ -22,10 +22,9 @@ COPY package.json package-lock.json ./
 
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/assets ./assets
-COPY --from=builder /app/template ./template
-COPY --from=builder /app/src/service ./src/service
+COPY --from=builder /app/build/client ./build/client
+COPY --from=builder /app/build/service ./build/service
 
 EXPOSE 3000
 
-CMD ["node", "src/service/index.js"]
+CMD ["node", "build/service/index.js"]

@@ -4,7 +4,7 @@ import path from 'node:path';
 /**
  * Creates the Express application used by the local loopback service.
  *
- * @param rootPath - Absolute project root path used to resolve static assets and the generated HTML template.
+ * @param rootPath - Absolute build root path used to resolve static assets and the generated HTML shell.
  * @returns Configured Express application instance.
  */
 export function createApp(rootPath: string): express.Express {
@@ -12,10 +12,10 @@ export function createApp(rootPath: string): express.Express {
 
   app.disable('x-powered-by');
 
-  app.use('/assets', express.static(path.join(rootPath, 'assets')));
+  app.use('/assets', express.static(path.join(rootPath, 'client', 'assets')));
 
   app.get('/', (_request, response) => {
-    response.sendFile(path.join(rootPath, 'template', 'index.html'));
+    response.sendFile(path.join(rootPath, 'client', 'index.html'));
   });
 
   return app;

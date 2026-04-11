@@ -1,10 +1,11 @@
 'use strict';
 
 const { spawnSync, spawn } = require('node:child_process');
+const fs = require('node:fs');
 const path = require('node:path');
 
 const rootPath = path.resolve(__dirname, '..');
-const serviceEntryPath = path.join(rootPath, 'src', 'service', 'index.js');
+const serviceEntryPath = path.join(rootPath, 'build', 'service', 'index.js');
 const gulpCliPath = path.join(rootPath, 'node_modules', 'gulp', 'bin', 'gulp.js');
 
 /**
@@ -40,6 +41,11 @@ function runInitialBuild() {
 }
 
 runInitialBuild();
+
+if (!fs.existsSync(serviceEntryPath)) {
+  console.error(`Expected generated service entrypoint at ${serviceEntryPath}`);
+  process.exit(1);
+}
 
 const watchProcess = spawnChild(process.execPath, [gulpCliPath, '--gulpfile', './gulpfile.js', 'watch']);
 const serviceProcess = spawnChild(process.execPath, ['--watch', serviceEntryPath]);

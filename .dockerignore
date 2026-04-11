@@ -1,5 +1,6 @@
 .git
 .gitignore
 node_modules
+build
 test/uat-*.png
 npm-debug.log*

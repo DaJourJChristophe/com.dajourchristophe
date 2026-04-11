@@ -1,8 +1,8 @@
 services:
   app:
     build:
-      context: .
-      dockerfile: Dockerfile.prod
+      context: ../..
+      dockerfile: infra/docker/Dockerfile.prod
     container_name: com-dajour-prod
     environment:
       NODE_ENV: production

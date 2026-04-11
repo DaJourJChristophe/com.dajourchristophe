@@ -12,9 +12,9 @@ const host = process.env.HOST ?? '127.0.0.1';
 const port = Number.parseInt(process.env.PORT ?? '3000', 10);
 
 /**
- * Absolute project root resolved from the compiled service entrypoint.
+ * Absolute build root resolved from the compiled service entrypoint.
  */
-const rootPath = path.resolve(__dirname, '..', '..');
+const rootPath = path.resolve(__dirname, '..');
 
 /**
  * Express app configured with static asset and document routes.

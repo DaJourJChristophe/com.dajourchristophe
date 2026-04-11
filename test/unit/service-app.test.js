@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const path = require('node:path');
 const test = require('node:test');
-const { createApp } = require('../../src/service/app.js');
+const { createApp } = require('../../build/service/app.js');
 
 /**
  * Starts an Express app on an ephemeral loopback port.
@@ -39,7 +39,7 @@ function listen(app) {
 }
 
 test('service app serves the generated portfolio shell', async () => {
-  const rootPath = path.resolve(__dirname, '..', '..');
+  const rootPath = path.resolve(__dirname, '..', '..', 'build');
   const app = createApp(rootPath);
   const server = await listen(app);
 

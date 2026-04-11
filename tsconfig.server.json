@@ -3,6 +3,7 @@
     "target": "ES2022",
     "module": "CommonJS",
     "rootDir": "src/service",
+    "outDir": "build/service",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
