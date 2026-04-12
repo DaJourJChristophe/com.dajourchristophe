@@ -13,6 +13,7 @@
     "build:server": "gulp --gulpfile ./gulpfile.js service:dev",
     "build:service": "gulp --gulpfile ./gulpfile.js service:dev",
     "ci": "npm run build:dev && npm run test:unit && npm run uat",
+    "dev": "node scripts/dev-container.cjs",
     "watch": "gulp --gulpfile ./gulpfile.js watch",
     "dev:container": "node scripts/dev-container.cjs",
     "start": "node build/service/index.js",
