@@ -48,6 +48,12 @@ Development build:
 npm.cmd run build:dev
 ```
 
+Watch and run the local dev service:
+
+```powershell
+npm.cmd run dev
+```
+
 Production build:
 
 ```powershell
