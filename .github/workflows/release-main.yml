@@ -44,9 +44,15 @@ jobs:
         if: steps.release_guard.outputs.skip != 'true'
         run: npm ci
 
+      - name: Remove broken runner apt sources
+        if: steps.release_guard.outputs.skip != 'true'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+
       - name: Install Playwright browsers
         if: steps.release_guard.outputs.skip != 'true'
-        run: npx playwright install chromium firefox webkit
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Validate release candidate
         if: steps.release_guard.outputs.skip != 'true'

@@ -32,8 +32,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Remove broken runner apt sources
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/azure-cli.list
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+
       - name: Install Playwright browsers
-        run: npx playwright install chromium firefox webkit
+        run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Validate stage branch
         run: npm run ci
