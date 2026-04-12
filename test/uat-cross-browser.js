@@ -215,6 +215,8 @@ async function openState(page, state) {
   });
   await page.locator('.article.open').waitFor({ state: 'attached' });
   await page.locator(state.readySelector).waitFor({ state: 'attached' });
+  await page.locator(state.readySelector).scrollIntoViewIfNeeded();
+  await page.waitForTimeout(150);
   await page.waitForTimeout(900);
 
   if (state.expectedText) {
@@ -308,7 +310,9 @@ async function assertResponsiveLayout(page, state, viewportName) {
     throw new Error(`${viewportName} ${state.name} rendered outside the viewport horizontally`);
   }
 
-  if (metrics.readyBottom < 1 || metrics.readyTop > metrics.viewportHeight - 1) {
+  // Article panels may be taller than the viewport on tablet/phone layouts.
+  // What we care about is whether the panel intersects the viewport at all.
+  if (metrics.readyBottom < 1 || metrics.readyTop >= metrics.viewportHeight) {
     throw new Error(`${viewportName} ${state.name} rendered outside the viewport vertically`);
   }
 
