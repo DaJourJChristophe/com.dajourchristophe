@@ -2,10 +2,11 @@
 .article .section.experience {
   justify-content: center;
   align-items: center;
-  padding: 1.3rem;
-  background:
-    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.35) 28%, transparent 52%),
-    linear-gradient(180deg, #d8d5d1 0%, #cfcbc7 100%);
+  padding: 0 4.5rem 1.3rem 12.5rem;
+  background: 0 0;
+  // background:
+  //   radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.35) 28%, transparent 52%),
+  //   linear-gradient(180deg, #d8d5d1 0%, #cfcbc7 100%);
 }
 
 .section.experience .button {
@@ -65,7 +66,7 @@
   min-height: 100%;
   width: 58.8%;
   min-width: 0;
-  padding: 7.6rem 4rem 5rem 7rem;
+  padding: 2.5rem 4rem 5rem 12.5rem;
   background: transparent;
   z-index: 3;
 }
@@ -93,19 +94,9 @@
   mask-size: 100% 100%;
 }
 
-.section.experience .copy::after {
-  content: '';
-  position: absolute;
-  top: 7.5rem;
-  bottom: 0;
-  left: 4.45rem;
-  width: 1px;
-  background: rgba(20, 20, 20, 0.07);
-}
-
 .section.experience .copy-inner {
   position: relative;
-  max-width: 39rem;
+  max-width: 50rem;
   z-index: 2;
 }
 
@@ -139,7 +130,6 @@
 }
 
 .section.experience .subhero {
-  max-width: 36rem;
   margin: 0 0 2.4rem;
   line-height: 1.08;
   color: #2f2f2f;
@@ -149,7 +139,6 @@
 }
 
 .section.experience .text {
-  max-width: 34rem;
   margin: 0 0 1.55rem;
   line-height: 1.7;
   color: #545454;

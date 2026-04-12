@@ -1,4 +1,6 @@
 // Global element resets, document/body presentation, and the root page grid.
+// * { outline: 1px solid red }
+
 * {
   box-sizing: border-box;
   -webkit-user-select: none;
@@ -15,6 +17,18 @@ html {
   font-size: 10px;
 }
 
+@property --bg-outer {
+  syntax: '<color>';
+  initial-value: #d4d4d4;
+  inherits: false;
+}
+
+@property --bg-inner {
+  syntax: '<color>';
+  initial-value: #d4d4d4;
+  inherits: false;
+}
+
 body {
   width: 100vw;
   height: auto;
@@ -25,7 +39,13 @@ body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 14px;
   background-color: #d4d4d4;
+  background: linear-gradient(
+    var(--bg-outer) 0%,
+    var(--bg-inner) 50%,
+    var(--bg-outer) 100%
+  );
   -webkit-user-drag: none;
+  transition: --bg-outer 500ms ease, --bg-inner 500ms ease;
 }
 
 @keyframes background-entry-animation {
@@ -52,6 +72,10 @@ body::before {
   z-index: -1;
 }
 
+body.hide::before {
+  visibility: hidden;
+}
+
 @keyframes splash-animation {
   from { transform: translateY(     0); }
     to { transform: translateY(-100vh); }
@@ -64,7 +88,6 @@ body .page {
   height: 100vh;
   padding: 0 30px;
   cursor: default;
-  background-color: #d4d4d4;
   grid-template-areas:
     't t t'
     'n n n'
@@ -87,6 +110,32 @@ body .page {
   transform: translateY(0);
   animation: splash-animation 240ms linear 2s forwards;
   z-index: 1000;
+}
+
+body.black,
+.page.black {
+  --bg-outer: rgba(204, 79, 0, .015);
+  --bg-inner: rgba(214, 92, 5, .015);
+}
+body.blue,
+.page.blue {
+  --bg-outer: rgba(204, 180, 0, .015);
+  --bg-inner: rgba(223, 199, 30, .015);
+}
+body.orange,
+.page.orange {
+  --bg-outer: rgba(125, 204, 0, .015);
+  --bg-inner: rgba(146, 224, 26, .015);
+}
+body.red,
+.page.red {
+  --bg-outer: rgba(0, 125, 204, .015);
+  --bg-inner: rgba(30, 149, 224, .015);
+}
+body.white,
+.page.white {
+  --bg-outer: rgba(78, 0, 204, .015);
+  --bg-inner: rgba(103, 26, 224, .015);
 }
 
 @keyframes splash-entry-animation {

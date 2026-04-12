@@ -43,6 +43,11 @@ export function composeCleanups(...cleanups: Cleanup[]): Cleanup {
  * @returns Resolved element bag when the shell exists; otherwise `null`.
  */
 export function resolveElements(): AppElements | null {
+  const pageRoot = document.getElementById('body') as NullableElement<HTMLElement>;
+  const bannerElement = document.getElementById('banner') as NullableElement<HTMLElement>;
+  const footerElement = document.getElementById('footer') as NullableElement<HTMLElement>;
+  const leftMenuElement = document.getElementById('left-menu') as NullableElement<HTMLElement>;
+  const spacerElement = document.getElementById('spacer') as NullableElement<HTMLElement>;
   const articleTarget = document.getElementById('article') as NullableElement<HTMLElement>;
   const openCtaButton = document.getElementById('open-cta') as NullableElement<HTMLButtonElement>;
   const workWithMeButton = document.getElementById('work-with-me-cta') as NullableElement<HTMLButtonElement>;
@@ -54,6 +59,11 @@ export function resolveElements(): AppElements | null {
   const privacyButton = document.getElementById('privacy-cta') as NullableElement<HTMLButtonElement>;
 
   if (
+    !pageRoot ||
+    !bannerElement ||
+    !footerElement ||
+    !leftMenuElement ||
+    !spacerElement ||
     !articleTarget ||
     !openCtaButton ||
     !workWithMeButton ||
@@ -70,11 +80,16 @@ export function resolveElements(): AppElements | null {
   return {
     aboutMeButton,
     articleTarget,
+    bannerElement,
     experienceButton,
+    footerElement,
+    leftMenuElement,
     openCtaButton,
+    pageRoot,
     privacyButton,
     servicesButton,
     socialMediaButton,
+    spacerElement,
     termsButton,
     workWithMeButton,
     navigationButtons: [experienceButton, servicesButton, aboutMeButton, socialMediaButton]

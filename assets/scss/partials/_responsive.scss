@@ -124,6 +124,67 @@
     padding-inline: clamp(3rem, 8vw, 8rem);
   }
 
+  .article .section.experience {
+    padding: 1.4rem;
+  }
+
+  .section.experience .button {
+    top: 3rem;
+    left: 3rem;
+  }
+
+  .section.experience .panel {
+    min-height: 0;
+    height: auto;
+  }
+
+  .section.experience .visual,
+  .section.experience .copy {
+    position: relative;
+    width: 100%;
+  }
+
+  .section.experience .visual {
+    min-height: 36rem;
+  }
+
+  .section.experience .copy {
+    min-height: 0;
+    padding: 8.8rem 3rem 4rem;
+  }
+
+  .section.experience .copy::before {
+    right: 0;
+  }
+
+  .section.experience .copy::after {
+    left: 1.2rem;
+    top: 8.8rem;
+  }
+
+  .section.experience .copy-inner {
+    max-width: 100%;
+  }
+
+  .section.experience .hero {
+    font-size: clamp(5.8rem, 18vw, 8.4rem);
+  }
+
+  .section.experience .subhero {
+    font-size: clamp(2.2rem, 6vw, 3rem);
+  }
+
+  .section.experience .watermark {
+    left: -8.6rem;
+    bottom: 2.2rem;
+    font-size: 7rem;
+  }
+
+  .section.experience .meta {
+    right: 3rem;
+    bottom: 3rem;
+  }
+
   .section.contact .detail-grid,
   .section.legal .content {
     grid-template-columns: 1fr;
@@ -233,6 +294,58 @@
 
   .article .section {
     padding: 7rem 2rem 5rem;
+  }
+
+  .article .section.experience {
+    padding: 1rem;
+  }
+
+  .section.experience .button {
+    top: 2.2rem;
+    left: 2.2rem;
+  }
+
+  .section.experience .copy {
+    padding: 7.8rem 2.2rem 3rem;
+  }
+
+  .section.experience .copy::after {
+    left: 0;
+    top: 7.8rem;
+  }
+
+  .section.experience .visual {
+    min-height: 28rem;
+    background-position: 60% center;
+  }
+
+  .section.experience .hero {
+    font-size: clamp(4.8rem, 20vw, 6.8rem);
+    letter-spacing: -0.24rem;
+  }
+
+  .section.experience .subhero {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+  }
+
+  .section.experience .text {
+    font-size: 1.34rem;
+  }
+
+  .section.experience .cta {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .section.experience .watermark {
+    left: -6.9rem;
+    font-size: 5.6rem;
+  }
+
+  .section.experience .meta {
+    right: 2.2rem;
+    bottom: 2.2rem;
+    font-size: 0.92rem;
   }
 
   .section.social-media .shell,

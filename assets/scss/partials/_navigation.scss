@@ -156,6 +156,10 @@
   font-weight: 500;
 }
 
+.navigation .list .list > .list-item .link:focus {
+  outline: none;
+}
+
 .navigation .brand-logo {
   display: block;
   width: 250px;
