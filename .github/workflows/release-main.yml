@@ -46,7 +46,7 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.release_guard.outputs.skip != 'true'
-        run: npx playwright install --with-deps chromium firefox webkit
+        run: npx playwright install chromium firefox webkit
 
       - name: Validate release candidate
         if: steps.release_guard.outputs.skip != 'true'
