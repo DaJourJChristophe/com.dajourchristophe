@@ -125,7 +125,7 @@ test('service app serves sitemap.xml from the web root', async () => {
     assert.equal(response.status, 200);
     assert.match(response.headers.get('content-type') ?? '', /application\/xml/);
     assert.match(body, /<urlset/);
-    assert.match(body, /<loc>http:\/\/127\.0\.0\.1:3000\/<\/loc>/);
+    assert.match(body, /<loc>http:\/\/dajourchristophe\.com\/<\/loc>/);
   } finally {
     await server.close();
   }
@@ -144,7 +144,7 @@ test('service app serves robots.txt from the web root', async () => {
     assert.match(response.headers.get('content-type') ?? '', /text\/plain/);
     assert.match(body, /User-agent: \*/);
     assert.match(body, /Allow: \//);
-    assert.match(body, /Sitemap: http:\/\/127\.0\.0\.1:3000\/sitemap\.xml/);
+    assert.match(body, /Sitemap: http:\/\/dajourchristophe\.com\/sitemap\.xml/);
   } finally {
     await server.close();
   }
