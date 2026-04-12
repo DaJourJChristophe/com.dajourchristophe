@@ -2,10 +2,8 @@
 .article .section.experience {
   justify-content: center;
   align-items: center;
-  padding: 1.3rem;
-  background:
-    radial-gradient(circle at 16% 12%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.35) 28%, transparent 52%),
-    linear-gradient(180deg, #d8d5d1 0%, #cfcbc7 100%);
+  padding: 0 4.5rem 1.3rem 12.5rem;
+  background: 0 0;
 }
 
 .section.experience .button {
@@ -31,7 +29,6 @@
   isolation: isolate;
 }
 
-/* right photo block */
 .section.experience .visual {
   position: absolute;
   top: 0;
@@ -57,7 +54,6 @@
     radial-gradient(circle at 94% 22%, rgba(255, 255, 255, 0.12), transparent 24%);
 }
 
-/* left content column */
 .section.experience .copy {
   position: relative;
   display: flex;
@@ -65,12 +61,11 @@
   min-height: 100%;
   width: 58.8%;
   min-width: 0;
-  padding: 7.6rem 4rem 5rem 7rem;
+  padding: 2.5rem 4rem 5rem 12.5rem;
   background: transparent;
   z-index: 3;
 }
 
-/* cream slab with corrected squiggle */
 .section.experience .copy::before {
   content: '';
   position: absolute;
@@ -81,31 +76,19 @@
   background: #f7f4f1;
   z-index: -1;
   pointer-events: none;
-
   -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000' preserveAspectRatio='none'%3E%3Cpath fill='white' d='M0 0H778C873 0 944 24 983 83C1015 131 1013 203 973 251C936 295 881 322 872 377C863 433 929 479 960 532C994 590 993 655 961 713C931 768 876 812 877 874C877 921 909 962 944 1000H0Z'/%3E%3C/svg%3E");
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: left top;
   -webkit-mask-size: 100% 100%;
-
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 1000' preserveAspectRatio='none'%3E%3Cpath fill='white' d='M0 0H778C873 0 944 24 983 83C1015 131 1013 203 973 251C936 295 881 322 872 377C863 433 929 479 960 532C994 590 993 655 961 713C931 768 876 812 877 874C877 921 909 962 944 1000H0Z'/%3E%3C/svg%3E");
   mask-repeat: no-repeat;
   mask-position: left top;
   mask-size: 100% 100%;
 }
 
-.section.experience .copy::after {
-  content: '';
-  position: absolute;
-  top: 7.5rem;
-  bottom: 0;
-  left: 4.45rem;
-  width: 1px;
-  background: rgba(20, 20, 20, 0.07);
-}
-
 .section.experience .copy-inner {
   position: relative;
-  max-width: 39rem;
+  max-width: 50rem;
   z-index: 2;
 }
 
@@ -139,7 +122,6 @@
 }
 
 .section.experience .subhero {
-  max-width: 36rem;
   margin: 0 0 2.4rem;
   line-height: 1.08;
   color: #2f2f2f;
@@ -149,7 +131,6 @@
 }
 
 .section.experience .text {
-  max-width: 34rem;
   margin: 0 0 1.55rem;
   line-height: 1.7;
   color: #545454;

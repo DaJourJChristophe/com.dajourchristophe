@@ -83,8 +83,15 @@ export interface AppElements {
   aboutMeButton: HTMLButtonElement;
   /** Article host where dynamic panels are rendered. */
   articleTarget: HTMLElement;
+  bannerElement: HTMLElement;
   /** Button that opens the experience article panel. */
   experienceButton: HTMLButtonElement;
+  /** Footer chrome shown on landing. */
+  footerElement: HTMLElement;
+  /** Left-side summary rail shown on landing. */
+  leftMenuElement: HTMLElement;
+  /** Root page element used for global visual state. */
+  pageRoot: HTMLElement;
   /** Landing CTA that opens the experience article panel. */
   openCtaButton: HTMLButtonElement;
   /** Footer button that opens the privacy policy panel. */
@@ -93,6 +100,8 @@ export interface AppElements {
   servicesButton: HTMLButtonElement;
   /** Button that opens the social-media article panel. */
   socialMediaButton: HTMLButtonElement;
+  /** Spacer element that belongs to the landing shell chrome. */
+  spacerElement: HTMLElement;
   /** Footer button that opens the terms of service panel. */
   termsButton: HTMLButtonElement;
   /** CTA button that opens the contact panel. */

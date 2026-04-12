@@ -27,6 +27,51 @@ export class PageController {
   }
 
   /**
+   * Hides the shared body background treatment while a toggled panel is active.
+   *
+   * @returns Nothing.
+   */
+  public hideBodyBackground(): void {
+    document.body.classList.add('hide');
+  }
+
+  /**
+   * Hides the landing banner while a toggled panel is active.
+   *
+   * @returns Nothing.
+   */
+  public hideBanner(): void {
+    this.elements.bannerElement.classList.add('hide');
+  }
+
+  /**
+   * Hides the left summary rail while a toggled panel is active.
+   *
+   * @returns Nothing.
+   */
+  public hideLeftMenu(): void {
+    this.elements.leftMenuElement.classList.add('hide');
+  }
+
+  /**
+   * Hides the landing footer while a toggled panel is active.
+   *
+   * @returns Nothing.
+   */
+  public hideFooter(): void {
+    this.elements.footerElement.classList.add('hide');
+  }
+
+  /**
+   * Hides the landing spacer while a toggled panel is active.
+   *
+   * @returns Nothing.
+   */
+  public hideSpacer(): void {
+    this.elements.spacerElement.classList.add('hide');
+  }
+
+  /**
    * Renders and opens one article panel.
    *
    * @param view - Article view to render.
@@ -43,6 +88,51 @@ export class PageController {
     }
 
     this.elements.articleTarget.classList.add('open');
+  }
+
+  /**
+   * Restores the landing banner when returning to the base state.
+   *
+   * @returns Nothing.
+   */
+  public showBanner(): void {
+    this.elements.bannerElement.classList.remove('hide');
+  }
+
+  /**
+   * Restores the left summary rail on the landing state.
+   *
+   * @returns Nothing.
+   */
+  public showLeftMenu(): void {
+    this.elements.leftMenuElement.classList.remove('hide');
+  }
+
+  /**
+   * Restores the landing footer on the base state.
+   *
+   * @returns Nothing.
+   */
+  public showFooter(): void {
+    this.elements.footerElement.classList.remove('hide');
+  }
+
+  /**
+   * Restores the landing spacer on the base state.
+   *
+   * @returns Nothing.
+   */
+  public showSpacer(): void {
+    this.elements.spacerElement.classList.remove('hide');
+  }
+
+  /**
+   * Restores the shared body background treatment on the landing state.
+   *
+   * @returns Nothing.
+   */
+  public showBodyBackground(): void {
+    document.body.classList.remove('hide');
   }
 
   /**
@@ -474,7 +564,7 @@ export class PageController {
       <h3 class="subhero">Building a Smarter, More Connected<br>Bike Share System</h3>
       <p class="text">A data-driven exploration of Philadelphia's bike share ecosystem. I analyzed usage patterns, station performance, and infrastructure gaps to uncover insights that can drive smarter expansion and improve rider experience.</p>
       <p class="text">The result is an interactive system that turns complex mobility data into clear, actionable decisions for a more connected city.</p>
-      <a class="cta" href="#" aria-label="View Cycle Philly case study"><span>View Case Study</span><span>&#8599;</span></a>
+      <a class="cta" href="https://www.phillymag.com/best-of-philly-archive/cyclephilly/" aria-label="View Cycle Philly case study" target="_blank"><span>View Case Study</span><span>&#8599;</span></a>
     </div>
     <span class="watermark">CYCLE PHILLY</span>
   </div>

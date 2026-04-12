@@ -3,9 +3,8 @@
 .article .section.contact,
 .article .section.legal {
   justify-content: flex-start;
-  align-items: center;
-  padding: 4rem 4rem 0;
-  background-color: #d4d4d4;
+  align-items: flex-start;
+  padding: 0 4rem 0 12.5rem;
 }
 
 .section.social-media .button,
@@ -74,7 +73,7 @@
   line-height: .92;
   letter-spacing: -0.18rem;
   color: #232323;
-  font-size: clamp(5.6rem, 5.8vw, 8.2rem);
+  font-size: clamp(5.4rem, 5.8vw, 8.2rem);
   font-family: 'Roboto', sans-serif;
   font-weight: 600;
   text-transform: none;
@@ -87,7 +86,7 @@
   margin: 0 0 5rem;
   line-height: 1.7;
   color: #4a4a4a;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -158,7 +157,6 @@
 
 .section.contact .contact-row {
   width: 100%;
-  padding-bottom: 3.2rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
@@ -234,7 +232,7 @@
   padding: 0 0 1.6rem 2.4rem;
   line-height: 1.7;
   color: #474747;
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   font-family: 'Roboto', sans-serif;
 }
 
@@ -284,7 +282,7 @@
   margin: 0;
   line-height: 1.7;
   color: #666;
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-family: 'Roboto', sans-serif;
 }
 

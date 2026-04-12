@@ -4,12 +4,16 @@ import { GuardController } from './guard-controller';
 import type { PageController } from './page-controller';
 import { AppState, LandingState, SplashState, ToggledState } from './states';
 
+const PAGE_COLORS = ['black', 'blue', 'orange', 'red', 'white'] as const;
+
 /**
  * Central application event bus and state machine.
  */
 export class AppContext {
   private readonly controller: PageController;
   private readonly guard = new GuardController();
+  private readonly bodyRoot: HTMLBodyElement;
+  private readonly pageRoot: HTMLElement;
 
   private readonly cleanup: Cleanup;
   private state: AppState | null = null;
@@ -18,9 +22,12 @@ export class AppContext {
    * Creates the context and binds global event capture.
    *
    * @param controller - Page controller used by states.
+   * @param pageRoot - Root page element used for global visual effects.
    */
-  constructor(controller: PageController) {
+  constructor(controller: PageController, pageRoot: HTMLElement) {
     this.controller = controller;
+    this.bodyRoot = document.body as HTMLBodyElement;
+    this.pageRoot = pageRoot;
     this.cleanup = this.bindEventSources();
   }
 
@@ -80,6 +87,9 @@ export class AppContext {
       this.bindDocumentEvent('pointermove'),
       this.bindDocumentEvent('pointerout'),
       this.bindDocumentEvent('pointerover'),
+      addListener<PointerEvent>(document, 'pointermove', (event): void => {
+        this.updatePageColor(event.clientX);
+      }),
       addListener<UIEvent>(window, 'resize', (event): void => {
         this.dispatchEvent({ event, target: event.target, type: 'resize' });
       })
@@ -119,5 +129,32 @@ export class AppContext {
     this.state?.exit();
     this.state = nextState;
     this.state.enter();
+  }
+
+  /**
+   * Maps the pointer position across the viewport to one of the page color bands.
+   *
+   * @param clientX - Horizontal pointer coordinate in viewport pixels.
+   * @returns Nothing.
+   */
+  private updatePageColor(clientX: number): void {
+    const windowWidth = Math.max(window.innerWidth, 1);
+    const regionWidth = windowWidth / PAGE_COLORS.length;
+    const rawIndex = Math.floor(clientX / regionWidth);
+    const index = Math.max(0, Math.min(rawIndex, PAGE_COLORS.length - 1));
+    const selectedColor = PAGE_COLORS[index];
+
+    PAGE_COLORS.forEach((color) => {
+      if (color !== selectedColor && this.pageRoot.classList.contains(color)) {
+        this.pageRoot.classList.remove(color);
+      }
+
+      if (color !== selectedColor && this.bodyRoot.classList.contains(color)) {
+        this.bodyRoot.classList.remove(color);
+      }
+    });
+
+    this.pageRoot.classList.add(selectedColor);
+    this.bodyRoot.classList.add(selectedColor);
   }
 }

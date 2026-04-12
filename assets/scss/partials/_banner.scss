@@ -11,6 +11,10 @@
   z-index: 3000;
 }
 
+.page .banner.hide {
+  visibility: hidden;
+}
+
 .banner .hero {
   --hero-track-x: 0px;
   --hero-track-y: 0px;
@@ -238,10 +242,11 @@
 
 @keyframes banner-label-animation {
   from { opacity: .00; }
-    to { opacity: .65; }
+    to { opacity: .15; }
 }
 
 .banner .label {
+  display: none !important;
   position: absolute;
   top: 4.5rem;
   left: -1.5rem;
