@@ -39,7 +39,16 @@ else
   echo "Deploying pinned ref $TARGET_REF"
 fi
 
+SSL_DIR="$REPO_PATH/etc"
+SSL_CERT="$SSL_DIR/dajourchristophe.com-certificate.pem"
+SSL_CHAIN="$SSL_DIR/dajourchristophe.com-intermediate.pem"
+SSL_FULLCHAIN="$SSL_DIR/dajourchristophe.com-fullchain.pem"
+
+if [ -f "$SSL_CERT" ] && [ -f "$SSL_CHAIN" ]; then
+  cat "$SSL_CERT" "$SSL_CHAIN" > "$SSL_FULLCHAIN"
+fi
+
 "${DOCKER_COMPOSE_PREFIX[@]}" -f infra/docker/docker-compose.prod.yml up --build -d
 "${DOCKER_COMPOSE_PREFIX[@]}" -f infra/docker/docker-compose.prod.yml ps
 echo "Gateway health:"
-curl --fail --silent http://127.0.0.1/healthz || true
+curl --fail --silent --insecure https://127.0.0.1/healthz || true
