@@ -1,6 +1,8 @@
 *.crt
 *.exe
 *.key
+*.pem
+*.cc
 .env.prod
 infra/docker/.env.prod
 

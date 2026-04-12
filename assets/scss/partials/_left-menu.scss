@@ -12,6 +12,10 @@
   animation: left-menu-entry-animation 240ms linear 2.5s forwards;
 }
 
+.page .left-menu.hide {
+  visibility: hidden;
+}
+
 .left-menu .list {
   display: flex;
   flex-direction: column;
@@ -65,4 +69,8 @@
 
 .page .spacer {
   grid-area: s;
+}
+
+.page .spacer.hide {
+  visibility: hidden;
 }
