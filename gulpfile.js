@@ -229,7 +229,11 @@ function clientProd(done) {
  * @returns {void}
  */
 function buildService(sourceMap) {
-  resetDirectory(buildServicePath);
+  if (sourceMap) {
+    ensureDirectory(buildServicePath);
+  } else {
+    resetDirectory(buildServicePath);
+  }
   execFileSync(process.execPath, [tscPath, '--project', 'tsconfig.server.json', '--sourceMap', String(sourceMap)], {
     cwd: __dirname,
     stdio: 'inherit'

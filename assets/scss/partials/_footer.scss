@@ -9,6 +9,10 @@
   z-index: 2000;
 }
 
+.page .footer.hide {
+  visibility: hidden;
+}
+
 .footer .legal-list {
   display: flex;
   gap: 1.4rem;

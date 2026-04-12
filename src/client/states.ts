@@ -165,6 +165,11 @@ export class LandingState extends InteractiveState {
    */
   public override enter(): void {
     super.enter();
+    this.controller.showBodyBackground();
+    this.controller.showBanner();
+    this.controller.showFooter();
+    this.controller.showLeftMenu();
+    this.controller.showSpacer();
     this.controller.closeArticle();
   }
 }
@@ -195,6 +200,11 @@ export class ToggledState extends InteractiveState {
    */
   public override enter(): void {
     super.enter();
+    this.controller.hideBodyBackground();
+    this.controller.hideBanner();
+    this.controller.hideFooter();
+    this.controller.hideLeftMenu();
+    this.controller.hideSpacer();
     this.controller.openArticle(this.view);
   }
 
