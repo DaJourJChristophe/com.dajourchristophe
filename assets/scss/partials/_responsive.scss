@@ -34,20 +34,56 @@
     overflow-y: auto !important;
   }
 
+  .page .splash {
+    position: fixed;
+    inset: 0;
+    margin: 0;
+    grid-area: auto;
+    pointer-events: none;
+    z-index: 5000;
+  }
+
+  .page .article {
+    margin: 0;
+    min-height: 0;
+  }
+
+  .page .article:not(.open) {
+    display: none;
+  }
+
+  .page .article.open {
+    display: block;
+    transform: none;
+  }
+
+  .page .banner.hide,
+  .page .footer.hide,
+  .page .spacer.hide,
+  .page .left-menu.hide {
+    display: none;
+  }
+
   body .page {
     min-height: 100vh;
     height: auto;
     padding-inline: 2rem;
     overflow-x: clip;
+    transform: none;
+    animation: none;
     grid-template-columns: 1fr;
     grid-template-areas:
-      't'
       'n'
       's'
       'b'
       'l'
       'f'
       'a';
+    grid-template-rows: auto 0 auto auto auto 0;
+  }
+
+  body .page:has(.article.open) {
+    grid-template-rows: auto 0 auto auto auto var(--article-height);
   }
 
   .page .splash {
@@ -207,7 +243,11 @@
 
   body .page {
     padding-inline: 1.6rem;
-    grid-template-rows: var(--splash-height) auto 0 auto auto auto var(--article-height);
+    grid-template-rows: auto 0 auto auto auto 0;
+  }
+
+  body .page:has(.article.open) {
+    grid-template-rows: auto 0 auto auto auto var(--article-height);
   }
 
   .page .splash {
@@ -247,12 +287,12 @@
   }
 
   .page .banner {
-    min-height: 58rem;
-    padding: 18rem 1rem 6rem;
+    min-height: 46rem;
+    padding: 10rem 1rem 4rem;
   }
 
   .banner .hero {
-    top: 6rem;
+    top: 3rem;
     left: 1rem;
     font-size: 110%;
     transform: translate3d(var(--hero-track-x), var(--hero-track-y), 0) scaleX(2.25) scaleY(1.9);
@@ -280,11 +320,11 @@
   }
 
   .banner .title {
-    margin-top: 6rem;
+    margin-top: 3rem;
   }
 
   .banner .text {
-    margin-bottom: 4rem;
+    margin-bottom: 2.8rem;
   }
 
   .footer .legal-list {
@@ -294,6 +334,19 @@
 
   .article .section {
     padding: 7rem 2rem 5rem;
+  }
+
+  .article .section.contact,
+  .article .section.social-media,
+  .article .section.legal {
+    padding: 1rem 2rem 4rem;
+  }
+
+  .section.contact .button,
+  .section.social-media .button,
+  .section.legal .button {
+    top: 1.2rem;
+    left: 1.2rem;
   }
 
   .article .section.experience {
@@ -352,7 +405,7 @@
   .section.contact .shell,
   .section.legal .shell {
     height: auto;
-    padding: 5rem 0 3rem;
+    padding: 3.8rem 0 3rem;
   }
 
   .section.social-media .hero,
