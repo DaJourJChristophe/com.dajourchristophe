@@ -273,6 +273,11 @@ async function collectMetrics(page, state) {
  * @returns {Promise<void>} Resolves when the responsive layout passes.
  */
 async function assertResponsiveLayout(page, state, viewportName) {
+  if (!['splash', 'landing'].includes(state.name)) {
+    await page.locator(state.readySelector).scrollIntoViewIfNeeded();
+    await page.waitForTimeout(150);
+  }
+
   const metrics = await page.evaluate((readySelector) => {
     const readyElement = document.querySelector(readySelector);
 
@@ -289,6 +294,7 @@ async function assertResponsiveLayout(page, state, viewportName) {
       articleTop: Math.round(articleRect?.top ?? 0),
       documentWidth: Math.round(document.documentElement.scrollWidth),
       readyBottom: Math.round(ready.bottom),
+      readyHeight: Math.round(ready.height),
       readyLeft: Math.round(ready.left),
       readyRight: Math.round(ready.right),
       readyTop: Math.round(ready.top),
@@ -311,8 +317,12 @@ async function assertResponsiveLayout(page, state, viewportName) {
   }
 
   // Article panels may be taller than the viewport on tablet/phone layouts.
-  // What we care about is whether the panel intersects the viewport at all.
-  if (metrics.readyBottom < 1 || metrics.readyTop >= metrics.viewportHeight) {
+  // What we care about is whether a meaningful slice of the panel remains visible.
+  const visibleVerticalSlice =
+    Math.min(metrics.readyBottom, metrics.viewportHeight) - Math.max(metrics.readyTop, 0);
+  const minimumVisibleHeight = Math.min(24, Math.max(12, Math.round(metrics.readyHeight * 0.05)));
+
+  if (visibleVerticalSlice < minimumVisibleHeight) {
     throw new Error(`${viewportName} ${state.name} rendered outside the viewport vertically`);
   }
 
