@@ -35,37 +35,37 @@ jobs:
           HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         run: |
           if [[ "$HEAD_COMMIT_MESSAGE" == chore\(release\):\ minor* ]]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "mode=tag" >> "$GITHUB_OUTPUT"
           else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "mode=prepare" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Install dependencies
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: npm ci
 
       - name: Remove broken runner apt sources
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: |
           sudo rm -f /etc/apt/sources.list.d/azure-cli.list
           sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
 
       - name: Install Playwright browsers
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: npx playwright install --with-deps chromium firefox webkit
 
       - name: Validate release candidate
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: npm run ci
 
       - name: Configure Git identity
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Require release token
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode != 'skip'
         env:
           RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
@@ -75,17 +75,62 @@ jobs:
           fi
 
       - name: Bump minor version
-        if: steps.release_guard.outputs.skip != 'true'
+        if: steps.release_guard.outputs.mode == 'prepare'
         run: node scripts/bump-version.mjs minor
 
-      - name: Commit and tag release
-        if: steps.release_guard.outputs.skip != 'true'
+      - name: Prepare release pull request
+        if: steps.release_guard.outputs.mode == 'prepare'
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+          RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          RELEASE_BRANCH="release/minor-v$VERSION"
+
+          git remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
+          git add package.json package-lock.json
+          git commit -m "chore(release): minor v$VERSION"
+          git push origin HEAD:"$RELEASE_BRANCH" --force
+
+          PR_NUMBER="$(gh pr list \
+            --repo "${{ github.repository }}" \
+            --head "$RELEASE_BRANCH" \
+            --base main \
+            --json number \
+            --jq '.[0].number')"
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "Release PR #$PR_NUMBER already exists for $RELEASE_BRANCH"
+          else
+            gh pr create \
+              --repo "${{ github.repository }}" \
+              --base main \
+              --head "$RELEASE_BRANCH" \
+              --title "chore(release): minor v$VERSION" \
+              --body "Automated minor release prepared from main after validation passed."
+
+            PR_NUMBER="$(gh pr list \
+              --repo "${{ github.repository }}" \
+              --head "$RELEASE_BRANCH" \
+              --base main \
+              --json number \
+              --jq '.[0].number')"
+          fi
+
+          gh pr merge "$PR_NUMBER" --repo "${{ github.repository }}" --auto --squash
+
+      - name: Tag merged release commit
+        if: steps.release_guard.outputs.mode == 'tag'
         env:
           RELEASE_PAT: ${{ secrets.RELEASE_PAT }}
         run: |
           VERSION="$(node -p "require('./package.json').version")"
           git remote set-url origin "https://x-access-token:${RELEASE_PAT}@github.com/${{ github.repository }}.git"
-          git add package.json package-lock.json
-          git commit -m "chore(release): minor v$VERSION"
+
+          if git rev-parse "v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists"
+            exit 0
+          fi
+
           git tag "v$VERSION"
-          git push origin HEAD:main --follow-tags
+          git push origin "v$VERSION"
