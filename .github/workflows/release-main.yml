@@ -16,6 +16,9 @@ concurrency:
 jobs:
   release-minor:
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.release_guard.outputs.mode }}
+      version: ${{ steps.release_version.outputs.version }}
 
     steps:
       - name: Check out repository
@@ -40,6 +43,9 @@ jobs:
             echo "mode=prepare" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Capture release version
+        id: release_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         if: steps.release_guard.outputs.mode == 'prepare'
         run: npm ci
@@ -134,3 +140,11 @@ jobs:
 
           git tag "v$VERSION"
           git push origin "v$VERSION"
+
+  deploy-production:
+    needs: release-minor
+    if: needs.release-minor.outputs.mode == 'tag'
+    uses: ./.github/workflows/deploy-production.yml
+    with:
+      target_ref: v${{ needs.release-minor.outputs.version }}
+    secrets: inherit

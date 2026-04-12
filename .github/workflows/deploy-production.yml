@@ -1,9 +1,17 @@
 name: Deploy Production
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  workflow_call:
+    inputs:
+      target_ref:
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      target_ref:
+        description: Git ref to deploy, such as a tag or branch name
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -26,7 +34,13 @@ jobs:
           script: |
             export REPO_URL="https://github.com/DaJourJChristophe/com.dajourchristophe.git"
             export REPO_DIR="$HOME/com.dajourchristophe"
-            export TARGET_REF="${{ github.ref_name }}"
+            TARGET_REF_INPUT="${{ inputs.target_ref }}"
+
+            if [ -n "$TARGET_REF_INPUT" ]; then
+              export TARGET_REF="$TARGET_REF_INPUT"
+            else
+              export TARGET_REF="${{ github.ref_name }}"
+            fi
 
             if [ ! -d "$REPO_DIR/.git" ]; then
               sudo apt-get update
